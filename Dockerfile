@@ -21,7 +21,8 @@ RUN apk add --no-cache \
 RUN addgroup mysql mysql
 
 RUN pip3 install flask \
-    flask-sqlalchemy
+    flask-sqlalchemy \
+    pymyspl
 
 RUN git clone https://github.com/NYUSHer/backend /backend
 

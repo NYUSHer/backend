@@ -11,7 +11,6 @@ user = Blueprint('user', __name__)
 def login():
     if request.method == 'POST':
         response = dict()
-        response['timestamp'] = int(time())
         email = request.form['email']
         pwdtoken = request.form['passwdtoken']
         indicator = validate_login(email, pwdtoken)
@@ -37,16 +36,16 @@ def login():
         else:
             response['state'] = False
             error = dict()
-            error['errorCode'] =  # TODO: decide an error code
+            error['errorCode'] =  000# TODO: decide an error code
             error['errorMsg'] = indicator
             response['error'] = error
+    response['timestamp'] = int(time())
     return jsonify(response)
 
 
 @user.route('/register', methods=['POST', 'GET'])
 def register():
     response = dict()
-    response['timestamp'] = time(time())
 
     email = request.form['email']
     username = request.form['username']
@@ -69,10 +68,10 @@ def register():
     else:  # if they are invalid
         response['state'] = False
         error = dict()
-        error['errorCode'] =  # TODO: decide an error code
+        error['errorCode'] =  000# TODO: decide an error code
         error['errorMsg'] = indicator
         response['error'] = error
-
+    response['timestamp'] = time(time())
     return jsonify(response)
 
 
@@ -81,4 +80,4 @@ def get_avatar():
         """
         TODO: retrieve avatar's url from db
         """
-    return imageuri
+    return imageurl
