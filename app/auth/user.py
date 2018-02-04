@@ -1,21 +1,38 @@
-from flask import request, jsonify
+from flask import request, jsonify, redirect, url_for
 from time import time
-from __init__ import app, config
+from app.util import CONFIG
 from app.auth import auth
 import uuid
 
 
+@auth.route('/')
+def hi():
+    return redirect(url_for('hello'))
+
+@auth.route('/hello')
+def hello():
+    return "hello"
+
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    response = dict()
     if request.method == 'POST':
-        response = dict()
-        email = request.form['email']
-        pwdtoken = request.form['passwdtoken']
-        indicator = validate_login(email, pwdtoken) # TODO: validate _login
-        if indicator == True:
-            cursor = config.cursor()
+        user_email = request.form['email']
+        user_token = request.form['passwdtoken']
+
+        # Check of the input email and token match database
+        cursor = CONFIG.cursor()
+        query = 'SELECT * FROM user WHERE user_email = %s and user_token = %s'
+        cursor.execute(query, (user_email, user_token))
+        indicator = cursor.fetchone()
+        cursor.close()
+
+        # Login Success
+        if indicator:
+            cursor = CONFIG.cursor()
             query = "SELECT 'user_id' FROM 'users' WHERE 'user_email' = %s"
-            cursor.execute(query, email)
+            cursor.execute(query, user_email)
             data_name = cursor.fetchall()
             cursor.close()
 
@@ -26,11 +43,12 @@ def login():
             data['token'] = token
 
             # Insert generated token to database
-            cursor = config.cursor()
+            cursor = CONFIG.cursor()
             query = "UPDATE 'users' SET 'user_email' = email WHERE 'user_token' = %s"
             cursor.execute(query, token)
             cursor.close()
             response['data'] = data
+        # Login Fail
         else:
             response['state'] = False
             error = dict()
@@ -44,39 +62,45 @@ def login():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     response = dict()
+    user_email = request.form['user_email']
+    user_name = request.form['user_name']
+    cursor = CONFIG.cursor()
+    # executes query
+    query = 'SELECT * FROM users WHERE user_name = %s'
+    cursor.execute(query, user_name)
+    # stores the results in a variable
+    indicator = cursor.fetchone()
 
-    email = request.form['email']
-    username = request.form['username']
-
-    # We will examine if email, and username are valid.
-    indicator = check_validity(email, username) # TODO: check_validity
-    if indicator == True:  # if they are valid
-        response['state'] = True
-        data = dict()
-        cursor = config.cursor()
-        token = uuid.uuid4()
-        query = "INSERT INTO 'users'('user_name', 'user_email', 'user_tokens') VALUES (%s, %s, %s)"
-        cursor.execute(query, (username, email, token))
-        cursor.close()
-
-        data['username'] = username
-        data['email'] = email
-        data['token'] = token
-        response['data'] = data
-    else:  # if they are invalid
+    # Invalid (user exists)
+    if indicator:
         response['state'] = False
         error = dict()
         error['errorCode'] = 000 # TODO: decide an error code
         error['errorMsg'] = indicator
         response['error'] = error
+
+    # Valid (user doesn't exist)
+    else:
+        response['state'] = True
+        data = dict()
+        cursor = CONFIG.cursor()
+        user_token = uuid.uuid4()
+        query = "INSERT INTO 'users'('user_name', 'user_email', 'user_tokens') VALUES (%s, %s, %s)"
+        cursor.execute(query, (user_name, user_email, user_token))
+        cursor.close()
+
+        data['username'] = user_name
+        data['email'] = user_email
+        data['token'] = user_token
+        response['data'] = data
     response['timestamp'] = int(time())
     return jsonify(response)
 
-
-@auth.route('/avatar', methods=['GET', 'POST'])
+"""
+@user.route('/avatar', methods=['POST', 'GET'])
 def get_avatar():
-    """
-    TODO: retrieve avatar's url from db
-    """
+
+        #TODO: retrieve avatar's url from db
 
     return imageurl
+"""
