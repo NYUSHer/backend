@@ -1,22 +1,20 @@
-from flask import Blueprint, request, jsonify
+from flask import request, jsonify
 from time import time
-from flask_sqlalchemy import SQLAlchemy
-from flask_mysqldb import MySQL
 from __init__ import app, config
+from app.auth import auth
 import uuid
 
-user = Blueprint('user', __name__)
 
-@user.route('/login', methods=['POST', 'GET'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         response = dict()
         email = request.form['email']
         pwdtoken = request.form['passwdtoken']
-        indicator = validate_login(email, pwdtoken)
+        indicator = validate_login(email, pwdtoken) # TODO: validate _login
         if indicator == True:
             cursor = config.cursor()
-            query = """SELECT 'user_id' FROM 'users' WHERE 'user_email' = %s"""
+            query = "SELECT 'user_id' FROM 'users' WHERE 'user_email' = %s"
             cursor.execute(query, email)
             data_name = cursor.fetchall()
             cursor.close()
@@ -29,21 +27,21 @@ def login():
 
             # Insert generated token to database
             cursor = config.cursor()
-            query = """UPDATE 'users' SET 'user_email' = email WHERE 'user_token' = %s"""
+            query = "UPDATE 'users' SET 'user_email' = email WHERE 'user_token' = %s"
             cursor.execute(query, token)
             cursor.close()
             response['data'] = data
         else:
             response['state'] = False
             error = dict()
-            error['errorCode'] =  000# TODO: decide an error code
+            error['errorCode'] = 000 # TODO: decide an error code
             error['errorMsg'] = indicator
             response['error'] = error
     response['timestamp'] = int(time())
     return jsonify(response)
 
 
-@user.route('/register', methods=['POST', 'GET'])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
     response = dict()
 
@@ -51,13 +49,13 @@ def register():
     username = request.form['username']
 
     # We will examine if email, and username are valid.
-    indicator = check_validity(email, username)
+    indicator = check_validity(email, username) # TODO: check_validity
     if indicator == True:  # if they are valid
         response['state'] = True
         data = dict()
         cursor = config.cursor()
         token = uuid.uuid4()
-        query = """INSERT INTO 'users'('user_name', 'user_email', 'user_tokens') VALUES (%s, %s, %s)"""
+        query = "INSERT INTO 'users'('user_name', 'user_email', 'user_tokens') VALUES (%s, %s, %s)"
         cursor.execute(query, (username, email, token))
         cursor.close()
 
@@ -68,16 +66,17 @@ def register():
     else:  # if they are invalid
         response['state'] = False
         error = dict()
-        error['errorCode'] =  000# TODO: decide an error code
+        error['errorCode'] = 000 # TODO: decide an error code
         error['errorMsg'] = indicator
         response['error'] = error
-    response['timestamp'] = time(time())
+    response['timestamp'] = int(time())
     return jsonify(response)
 
 
-@user.route('/avatar', methods=['POST', 'GET'])
+@auth.route('/avatar', methods=['GET', 'POST'])
 def get_avatar():
-        """
-        TODO: retrieve avatar's url from db
-        """
+    """
+    TODO: retrieve avatar's url from db
+    """
+
     return imageurl

@@ -2,12 +2,12 @@ from flask import Blueprint
 from flask import Flask
 import pymysql.cursors
 from flask_sqlalchemy import SQLAlchemy
-
+from .users import *
 
 auth = Blueprint('auth', __name__)
 
-from user import user
-auth.register_blueprint(user, url_prefix='/user')
+
+
 
 
 # Initialize app from flask
