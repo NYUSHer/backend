@@ -16,9 +16,9 @@ CONFIG = {'host': '192.168.64.2',
                          'charset': 'utf8',
                          'cursorclass': pymysql.cursors.DictCursor}
 """
-CONFIG = {'host': '!!!!!FILL THIS BEFORE USE!!!!!!', 'port': 6660,
+CONFIG = {'host': 'nyusher.nya.vc', 'port': 6660,
                          'user':'root',
-                         'password':'!!!!!!FILL THIS BEFORE USE!!!!!!',
+                         'password':'maxeeisgood',
                          'db':'NYUSHer',
                          'charset': 'utf8',
                          'cursorclass': pymysql.cursors.DictCursor}

@@ -9,6 +9,12 @@ import uuid
 DEBUG = True
 
 
+###########################################
+#                                         #
+#          Non-Authorized Code            #
+#                                         #
+###########################################
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     response = dict()
@@ -80,17 +86,13 @@ def register():
 
         sql = "INSERT INTO users(user_name, user_email, user_pass, user_tokens) VALUES ('{}', '{}', '{}', '{}')"\
             .format(user_name, user_email, user_pass, user_token)
-
         if DEBUG:
             print("insert query:" + sql)
-
         query_mod(sql, CONFIG)
 
         sql = "SELECT user_id FROM users WHERE user_name = '{}'".format(user_name)
-
         if DEBUG:
             print("get userid query:" + sql)
-
         user_id = query_fetch(sql, CONFIG)
 
         data['userid'] = user_id['user_id']
@@ -104,11 +106,48 @@ def register():
         print(response)
     return jsonify(response)
 
-"""
-@user.route('/avatar', methods=['POST', 'GET'])
+
+# TODO: redesign avatar api
+@auth.route('/avatar', methods=['POST', 'GET'])
 def get_avatar():
+    user_id = request.form['userid']
+    sql = 'SELECT user_avatar FROM users WHERE user_id = "{}"'.format(user_id)
+    response = query_fetch(sql, CONFIG)
+    if response:
+        return response['user_avatar']
 
-        #TODO: retrieve avatar's url from db
+###########################################
+#                                         #
+#             Authorized Code             #
+#                                         #
+###########################################
 
-    return imageurl
-"""
+
+def is_unauthorized(user_id, token):
+    sql = "SELECT user_tokens FROM users WHERE user_id = '{}'".format(user_id)
+    user_token = query_fetch(sql, CONFIG)
+    if user_token:
+        if token == user_token['user_tokens']:
+            return False
+        else:
+            return jsonify(dict(status=False,
+                                error={'errorCode': TOKEN_INVALID,
+                                       'errorMsg' : 'Token is invalid'},
+                                timestamp=int(time())
+                                ))
+    else:
+        return jsonify(dict(status=False,
+                            error={'errorCode': UID_ERR,
+                                   'errorMsg': 'UID does not exist'},
+                            timestamp=int(time())
+                            ))
+
+
+@auth.route('/authtest', methods=['GET', 'POST'])
+def authtest():
+    user_id = request.form['user_id']
+    token = request.form['user_token']
+    not_auth = is_unauthorized(user_id, token)
+    if not_auth:
+        return not_auth
+    return 'hello'

@@ -22,5 +22,15 @@ def register_test():
     res = res_data.read()
     print(res)
 
+def register_auth():
+    test_data = {"user_id": 1, "user_token":"3b355d73-9bfd-45bf-943e-91a05f3eb932"}
+    test_data_urlencode = parse.urlencode(test_data)
+    test_data_urlencode = bytes(test_data_urlencode, "utf-8")
+    requrl = "http://0.0.0.0:8084/auth/authtest"  # Adjust port
+    req = request.Request(url=requrl, data=test_data_urlencode)
+    res_data = request.urlopen(req)
+    res = res_data.read()
+    print(res)
+
 
 register_test()
