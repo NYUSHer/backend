@@ -4,6 +4,7 @@ from app.util import CONFIG
 from app.auth import auth
 import uuid
 
+DEBUG = True
 
 @auth.route('/')
 def hi():
@@ -20,18 +21,23 @@ def login():
     if request.method == 'POST':
         user_email = request.form['email']
         user_token = request.form['passwdtoken']
+        if DEBUG:
+            print(user_email, user_token)
 
         # Check of the input email and token match database
         cursor = CONFIG.cursor()
-        query = 'SELECT * FROM user WHERE user_email = %s and user_token = %s'
-        cursor.execute(query, (user_email, user_token))
+        query = 'SELECT * FROM users WHERE user_email = %s and user_tokens = %s'
+        cursor.execute(query, (user_email, str(user_token)))
         indicator = cursor.fetchone()
+        print(indicator)
         cursor.close()
 
         # Login Success
         if indicator:
+            print("success")
+
             cursor = CONFIG.cursor()
-            query = "SELECT 'user_id' FROM 'users' WHERE 'user_email' = %s"
+            query = "SELECT user_id FROM users WHERE user_email = %s"
             cursor.execute(query, user_email)
             data_name = cursor.fetchall()
             cursor.close()
@@ -44,12 +50,13 @@ def login():
 
             # Insert generated token to database
             cursor = CONFIG.cursor()
-            query = "UPDATE 'users' SET 'user_email' = email WHERE 'user_token' = %s"
-            cursor.execute(query, token)
+            query = "UPDATE users SET user_email = user_email WHERE user_tokens = %s"
+            cursor.execute(query, str(token))
             cursor.close()
             response['data'] = data
         # Login Fail
         else:
+            print("fail")
             response['state'] = False
             error = dict()
             error['errorCode'] = 000 # TODO: decide an error code
@@ -62,8 +69,8 @@ def login():
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     response = dict()
-    user_email = request.form['user_email']
-    user_name = request.form['user_name']
+    user_email = request.form['email']
+    user_name = request.form['username']
     cursor = CONFIG.cursor()
     # executes query
     query = 'SELECT * FROM users WHERE user_name = %s'
@@ -76,7 +83,7 @@ def register():
         response['state'] = False
         error = dict()
         error['errorCode'] = 000 # TODO: decide an error code
-        error['errorMsg'] = indicator
+        error['errorMsg'] = "error"
         response['error'] = error
 
     # Valid (user doesn't exist)
@@ -84,9 +91,10 @@ def register():
         response['state'] = True
         data = dict()
         cursor = CONFIG.cursor()
-        user_token = uuid.uuid4()
-        query = "INSERT INTO 'users'('user_name', 'user_email', 'user_tokens') VALUES (%s, %s, %s)"
-        cursor.execute(query, (user_name, user_email, user_token))
+        user_token = str(uuid.uuid4())
+        query = "INSERT INTO users(user_name, user_email, user_tokens) VALUES ('{}', '{}', '{}')".format(user_name, user_email, user_token)
+        print(query)
+        cursor.execute(query)
         cursor.close()
 
         data['username'] = user_name

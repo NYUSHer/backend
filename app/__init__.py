@@ -10,9 +10,6 @@ db = SQLAlchemy()
 def create_app(config_name):
     # Initialize app from flask
     app = Flask(__name__)
-    #app.config.from_object(CONFIG[config_name])
-    #CONFIG[CONFIG].init_app(app)
-
     db.init_app(app)
     db.app = app
 
@@ -25,6 +22,10 @@ def create_app(config_name):
 
     return app
 
-
+"""
+# Local
 if __name__ == "__main__":
-    create_app(CONFIG).run('127.0.0.1', 5013, debug=True)
+    create_app(CONFIG).run('127.0.0.1', 5016, debug=True)
+"""
+if __name__ == "__main__":
+    create_app(CONFIG).run('0.0.0.0', 8083, debug=True)
