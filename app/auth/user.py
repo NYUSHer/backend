@@ -3,6 +3,7 @@ from time import time
 from app.util import CONFIG
 from app.auth import auth
 from app.util import LOGIN_ERR, REG_ERR, TOKEN_INVALID, EMAIL_ERR, UID_ERR
+from app.util import query_fetch, query_mod
 import uuid
 
 DEBUG = True
@@ -18,33 +19,26 @@ def login():
             print(user_email, user_pass)
 
         # Check of the input email and token match database
-        cursor = CONFIG.cursor()
-        query = 'SELECT * FROM users WHERE user_email = "{}" and user_pass = "{}"'.format(user_email, user_pass)
-        cursor.execute(query)
-        indicator = cursor.fetchone()
-        print(indicator)
-        cursor.close()
+        sql = 'SELECT user_id FROM users WHERE user_email = "{}" and user_pass = "{}"'.format(user_email, user_pass)
+        indicator = query_fetch(sql, CONFIG)
+
+        if DEBUG:
+            print(indicator)
 
         # Login Success
         if indicator:
             print("success")
-            cursor = CONFIG.cursor()
-            query = "SELECT user_id FROM users WHERE user_email = '{}'".format(user_email)
-            cursor.execute(query)
-            data_name = cursor.fetchone()
-            cursor.close()
-
             response['state'] = True
             data = dict()
-            data['userid'] = data_name["user_id"]
-            token = uuid.uuid4()
+            data['userid'] = indicator['user_id']
+            token = uuid.uuid4() # generate token
             data['token'] = token
 
             # Insert generated token to database
-            cursor = CONFIG.cursor()
-            query = "UPDATE users SET user_email = '{}' WHERE user_tokens = '{}'".format(user_email, token)
-            cursor.execute(query)
-            cursor.close()
+            sql = "UPDATE users SET user_tokens = '{}' WHERE user_id = {} ".format(token, indicator['user_id'])
+            print(sql)
+            query_mod(sql, CONFIG)
+
             response['data'] = data
         # Login Fail
         else:
@@ -65,12 +59,9 @@ def register():
     user_email = request.form['email']
     user_name = request.form['username']
     user_pass = request.form['passwdtoken']
-    cursor = CONFIG.cursor()
-    # executes query
-    query = 'SELECT * FROM users WHERE user_name = "{}"'.format(user_name)
-    cursor.execute(query)
-    # stores the results in a variable
-    indicator = cursor.fetchone()
+
+    sql = 'SELECT user_id FROM users WHERE user_name = "{}"'.format(user_name)
+    indicator = query_fetch(sql, CONFIG)
 
     # Invalid (user exists)
     if indicator:
@@ -84,25 +75,26 @@ def register():
     else:
         response['state'] = True
         data = dict()
-        cursor = CONFIG.cursor()
-        user_token = str(uuid.uuid4())
-        query = "INSERT INTO users(user_name, user_email, user_pass) VALUES ('{}', '{}', '{}')".format(user_name, user_email, user_pass)
-        print("insert query:" + query)
-        cursor.execute(query)
-        cursor.close()
 
-        cursor = CONFIG.cursor()
-        query = "SELECT user_id FROM users WHERE user_name = '{}'".format(user_name)
-        print("get userid query:" + query)
-        cursor.execute(query)
-        user_id = cursor.fetchone()
-        cursor.close()
+        user_token = str(uuid.uuid4())
+
+        sql = "INSERT INTO users(user_name, user_email, user_pass) VALUES ('{}', '{}', '{}')"\
+            .format(user_name, user_email, user_pass)
+        if DEBUG:
+            print("insert query:" + sql)
+        query_mod(sql, CONFIG)
+
+        sql = "SELECT user_id FROM users WHERE user_name = '{}'".format(user_name)
+        if DEBUG:
+            print("get userid query:" + sql)
+        user_id = query_fetch(sql, CONFIG)
 
         data['userid'] = user_id['user_id']
         data['email'] = user_email
         data['username'] = user_name
         data['token'] = user_token
         response['data'] = data
+
     response['timestamp'] = int(time())
     print(response)
     return jsonify(response)
