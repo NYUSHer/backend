@@ -1,5 +1,11 @@
 import pymysql.cursors
 
+LOGIN_ERR = "001"
+REG_ERR = "002"
+TOKEN_INVALID = "101"
+EMAIL_ERR = "102"
+UID_ERR = "103"
+
 # Configure MySQL
 """
 # Local

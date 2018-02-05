@@ -1,18 +1,11 @@
-from flask import request, jsonify, redirect, url_for
+from flask import request, jsonify
 from time import time
 from app.util import CONFIG
 from app.auth import auth
+from app.util import LOGIN_ERR, REG_ERR, TOKEN_INVALID, EMAIL_ERR, UID_ERR
 import uuid
 
 DEBUG = True
-
-@auth.route('/')
-def hi():
-    return redirect(url_for('hello'))
-
-@auth.route('/hello')
-def hello():
-    return "hello"
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -20,14 +13,14 @@ def login():
     response = dict()
     if request.method == 'POST':
         user_email = request.form['email']
-        user_token = request.form['passwdtoken']
+        user_pass = request.form['passwdtoken']
         if DEBUG:
-            print(user_email, user_token)
+            print(user_email, user_pass)
 
         # Check of the input email and token match database
         cursor = CONFIG.cursor()
-        query = 'SELECT * FROM users WHERE user_email = %s and user_tokens = %s'
-        cursor.execute(query, (user_email, str(user_token)))
+        query = 'SELECT * FROM users WHERE user_email = "{}" and user_pass = "{}"'.format(user_email, user_pass)
+        cursor.execute(query)
         indicator = cursor.fetchone()
         print(indicator)
         cursor.close()
@@ -35,23 +28,22 @@ def login():
         # Login Success
         if indicator:
             print("success")
-
             cursor = CONFIG.cursor()
-            query = "SELECT user_id FROM users WHERE user_email = %s"
-            cursor.execute(query, user_email)
-            data_name = cursor.fetchall()
+            query = "SELECT user_id FROM users WHERE user_email = '{}'".format(user_email)
+            cursor.execute(query)
+            data_name = cursor.fetchone()
             cursor.close()
 
             response['state'] = True
             data = dict()
-            data['userid'] = data_name
+            data['userid'] = data_name["user_id"]
             token = uuid.uuid4()
             data['token'] = token
 
             # Insert generated token to database
             cursor = CONFIG.cursor()
-            query = "UPDATE users SET user_email = user_email WHERE user_tokens = %s"
-            cursor.execute(query, str(token))
+            query = "UPDATE users SET user_email = '{}' WHERE user_tokens = '{}'".format(user_email, token)
+            cursor.execute(query)
             cursor.close()
             response['data'] = data
         # Login Fail
@@ -59,10 +51,11 @@ def login():
             print("fail")
             response['state'] = False
             error = dict()
-            error['errorCode'] = 000 # TODO: decide an error code
-            error['errorMsg'] = indicator
+            error['errorCode'] = LOGIN_ERR
+            error['errorMsg'] = "Email or Password did not match database"
             response['error'] = error
     response['timestamp'] = int(time())
+    print(response)
     return jsonify(response)
 
 
@@ -71,10 +64,11 @@ def register():
     response = dict()
     user_email = request.form['email']
     user_name = request.form['username']
+    user_pass = request.form['passwdtoken']
     cursor = CONFIG.cursor()
     # executes query
-    query = 'SELECT * FROM users WHERE user_name = %s'
-    cursor.execute(query, user_name)
+    query = 'SELECT * FROM users WHERE user_name = "{}"'.format(user_name)
+    cursor.execute(query)
     # stores the results in a variable
     indicator = cursor.fetchone()
 
@@ -82,8 +76,8 @@ def register():
     if indicator:
         response['state'] = False
         error = dict()
-        error['errorCode'] = 000 # TODO: decide an error code
-        error['errorMsg'] = "error"
+        error['errorCode'] = REG_ERR
+        error['errorMsg'] = "User already exists"
         response['error'] = error
 
     # Valid (user doesn't exist)
@@ -92,16 +86,25 @@ def register():
         data = dict()
         cursor = CONFIG.cursor()
         user_token = str(uuid.uuid4())
-        query = "INSERT INTO users(user_name, user_email, user_tokens) VALUES ('{}', '{}', '{}')".format(user_name, user_email, user_token)
-        print(query)
+        query = "INSERT INTO users(user_name, user_email, user_pass) VALUES ('{}', '{}', '{}')".format(user_name, user_email, user_pass)
+        print("insert query:" + query)
         cursor.execute(query)
         cursor.close()
 
-        data['username'] = user_name
+        cursor = CONFIG.cursor()
+        query = "SELECT user_id FROM users WHERE user_name = '{}'".format(user_name)
+        print("get userid query:" + query)
+        cursor.execute(query)
+        user_id = cursor.fetchone()
+        cursor.close()
+
+        data['userid'] = user_id['user_id']
         data['email'] = user_email
+        data['username'] = user_name
         data['token'] = user_token
         response['data'] = data
     response['timestamp'] = int(time())
+    print(response)
     return jsonify(response)
 
 """
