@@ -76,17 +76,21 @@ def register():
         response['state'] = True
         data = dict()
 
-        user_token = str(uuid.uuid4())
+        user_token = uuid.uuid4()
 
-        sql = "INSERT INTO users(user_name, user_email, user_pass) VALUES ('{}', '{}', '{}')"\
-            .format(user_name, user_email, user_pass)
+        sql = "INSERT INTO users(user_name, user_email, user_pass, user_tokens) VALUES ('{}', '{}', '{}', '{}')"\
+            .format(user_name, user_email, user_pass, user_token)
+
         if DEBUG:
             print("insert query:" + sql)
+
         query_mod(sql, CONFIG)
 
         sql = "SELECT user_id FROM users WHERE user_name = '{}'".format(user_name)
+
         if DEBUG:
             print("get userid query:" + sql)
+
         user_id = query_fetch(sql, CONFIG)
 
         data['userid'] = user_id['user_id']
@@ -96,7 +100,8 @@ def register():
         response['data'] = data
 
     response['timestamp'] = int(time())
-    print(response)
+    if DEBUG:
+        print(response)
     return jsonify(response)
 
 """
