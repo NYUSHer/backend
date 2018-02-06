@@ -1,12 +1,10 @@
 from flask import request, jsonify
 from time import time
-from app.util import CONFIG
 from app.auth import auth
-from app.util import LOGIN_ERR, REG_ERR, TOKEN_INVALID, EMAIL_ERR, UID_ERR
-from app.util import query_fetch, query_mod
+from app.util import LOGIN_ERR, REG_ERR
+from app.util import query_fetch, query_mod, auth_required
+from instance.config import VERBOSE, DB
 import uuid
-
-DEBUG = True
 
 
 ###########################################
@@ -21,19 +19,19 @@ def login():
     if request.method == 'POST':
         user_email = request.form['email']
         user_pass = request.form['passwdtoken']
-        if DEBUG:
+        if VERBOSE:
             print(user_email, user_pass)
 
         # Check of the input email and token match database
         sql = 'SELECT user_id FROM users WHERE user_email = "{}" and user_pass = "{}"'.format(user_email, user_pass)
-        indicator = query_fetch(sql, CONFIG)
+        indicator = query_fetch(sql, DB)
 
-        if DEBUG:
+        if VERBOSE:
             print(indicator)
 
         # Login Success
         if indicator:
-            print("success")
+            #print("success")
             response['state'] = True
             data = dict()
             data['userid'] = indicator['user_id']
@@ -42,20 +40,18 @@ def login():
 
             # Insert generated token to database
             sql = "UPDATE users SET user_tokens = '{}' WHERE user_id = {} ".format(token, indicator['user_id'])
-            print(sql)
-            query_mod(sql, CONFIG)
+            query_mod(sql, DB)
 
             response['data'] = data
         # Login Fail
         else:
-            print("fail")
+            #print("fail")
             response['state'] = False
             error = dict()
             error['errorCode'] = LOGIN_ERR
             error['errorMsg'] = "Email or Password did not match database"
             response['error'] = error
     response['timestamp'] = int(time())
-    print(response)
     return jsonify(response)
 
 
@@ -67,7 +63,7 @@ def register():
     user_pass = request.form['passwdtoken']
 
     sql = 'SELECT user_id FROM users WHERE user_name = "{}"'.format(user_name)
-    indicator = query_fetch(sql, CONFIG)
+    indicator = query_fetch(sql, DB)
 
     # Invalid (user exists)
     if indicator:
@@ -86,14 +82,14 @@ def register():
 
         sql = "INSERT INTO users(user_name, user_email, user_pass, user_tokens) VALUES ('{}', '{}', '{}', '{}')"\
             .format(user_name, user_email, user_pass, user_token)
-        if DEBUG:
+        if VERBOSE:
             print("insert query:" + sql)
-        query_mod(sql, CONFIG)
+        query_mod(sql, DB)
 
         sql = "SELECT user_id FROM users WHERE user_name = '{}'".format(user_name)
-        if DEBUG:
+        if VERBOSE:
             print("get userid query:" + sql)
-        user_id = query_fetch(sql, CONFIG)
+        user_id = query_fetch(sql, DB)
 
         data['userid'] = user_id['user_id']
         data['email'] = user_email
@@ -102,7 +98,7 @@ def register():
         response['data'] = data
 
     response['timestamp'] = int(time())
-    if DEBUG:
+    if VERBOSE:
         print(response)
     return jsonify(response)
 
@@ -112,7 +108,7 @@ def register():
 def get_avatar():
     user_id = request.form['userid']
     sql = 'SELECT user_avatar FROM users WHERE user_id = "{}"'.format(user_id)
-    response = query_fetch(sql, CONFIG)
+    response = query_fetch(sql, DB)
     if response:
         return response['user_avatar']
 
@@ -123,31 +119,7 @@ def get_avatar():
 ###########################################
 
 
-def is_unauthorized(user_id, token):
-    sql = "SELECT user_tokens FROM users WHERE user_id = '{}'".format(user_id)
-    user_token = query_fetch(sql, CONFIG)
-    if user_token:
-        if token == user_token['user_tokens']:
-            return False
-        else:
-            return jsonify(dict(status=False,
-                                error={'errorCode': TOKEN_INVALID,
-                                       'errorMsg' : 'Token is invalid'},
-                                timestamp=int(time())
-                                ))
-    else:
-        return jsonify(dict(status=False,
-                            error={'errorCode': UID_ERR,
-                                   'errorMsg': 'UID does not exist'},
-                            timestamp=int(time())
-                            ))
-
-
 @auth.route('/authtest', methods=['GET', 'POST'])
+@auth_required
 def authtest():
-    user_id = request.form['user_id']
-    token = request.form['user_token']
-    not_auth = is_unauthorized(user_id, token)
-    if not_auth:
-        return not_auth
     return 'hello'

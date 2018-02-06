@@ -1,27 +1,13 @@
 import pymysql.cursors
+from time import time
+from flask import request, jsonify
+from instance.config import DB
 
 LOGIN_ERR = "001"
 REG_ERR = "002"
 TOKEN_INVALID = "101"
 EMAIL_ERR = "102"
 UID_ERR = "103"
-
-# Configure MySQL
-"""
-# Local
-CONFIG = {'host': '192.168.64.2',
-                         'user':'root',
-                         'password':'',
-                         'db':'NYUSHer',
-                         'charset': 'utf8',
-                         'cursorclass': pymysql.cursors.DictCursor}
-"""
-CONFIG = {'host': 'nyusher.nya.vc', 'port': 6660,
-                         'user':'root',
-                         'password':'maxeeisgood',
-                         'db':'NYUSHer',
-                         'charset': 'utf8',
-                         'cursorclass': pymysql.cursors.DictCursor}
 
 
 def query_mod(sql, config):
@@ -46,3 +32,27 @@ def query_fetch(sql, config):
     finally:
         connection.close()
     return result
+
+
+def auth_required(fn):
+    def wrapper(*args, **kwargs):
+        user_id = request.form['user_id']
+        token = request.form['user_token']
+        sql = "SELECT user_tokens FROM users WHERE user_id = '{}'".format(user_id)
+        user_token = query_fetch(sql, DB)
+        if user_token:
+            if token == user_token['user_tokens']:
+                return fn(*args, **kwargs)
+            else:
+                return jsonify(dict(status=False,
+                                    error={'errorCode': TOKEN_INVALID,
+                                           'errorMsg' : 'Token is invalid'},
+                                    timestamp=int(time())
+                                    ))
+        else:
+            return jsonify(dict(status=False,
+                                error={'errorCode': UID_ERR,
+                                       'errorMsg': 'UID does not exist'},
+                                timestamp=int(time())
+                                ))
+    return wrapper
