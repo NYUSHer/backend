@@ -1,7 +1,6 @@
 # coding=utf-8
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app.util import CONFIG
 
 
 db = SQLAlchemy()
@@ -28,4 +27,4 @@ if __name__ == "__main__":
     create_app(CONFIG).run('127.0.0.1', 5016, debug=True)
 """
 if __name__ == "__main__":
-    create_app(CONFIG).run('0.0.0.0', 8084, debug=True)
+    create_app().run('0.0.0.0', 8084, debug=True)
