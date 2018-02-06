@@ -64,13 +64,13 @@ def token_required(fn):
             if token == user_token['user_tokens']:
                 return fn(*args, **kwargs)
             else:
-                return jsonify(dict(status=False,
+                return jsonify(dict(state=False,
                                     error={'errorCode': TOKEN_INVALID,
                                            'errorMsg' : 'Token is invalid'},
                                     timestamp=int(time())
                                     ))
         else:
-            return jsonify(dict(status=False,
+            return jsonify(dict(state=False,
                                 error={'errorCode': UID_ERR,
                                        'errorMsg': 'UID does not exist'},
                                 timestamp=int(time())
