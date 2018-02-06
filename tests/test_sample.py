@@ -1,6 +1,7 @@
 import unittest
 from flask import current_app
-from app import create_app, db
+from app import create_app#, db
+
 
 class BasicTestCase(unittest.TestCase):
     """
@@ -13,12 +14,13 @@ class BasicTestCase(unittest.TestCase):
         self.app = create_app('testing')
         self.app_context = self.app.app_context()
         self.app_context.push()
-        db.create_all()
+        self.client = self.app.test_client()
+        #db.create_all()
 
     def tearDown(self):
         """每个单元测试执行结束后会调用"""
-        db.session.remove()
-        db.drop_all()
+        #db.session.remove()
+        #db.drop_all()
         self.app_context.pop()
 
     def test_app_exists(self):

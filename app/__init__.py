@@ -1,16 +1,19 @@
-# coding=utf-8
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from instance.config import config
 
 
-db = SQLAlchemy()
+#db = SQLAlchemy()
 
 
 def create_app(config_name):
     # Initialize app from flask
     app = Flask(__name__)
-    db.init_app(app)
-    db.app = app
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
+    #db.init_app(app)
+    #db.app = app
 
     # Register blueprint
     # Add 'auth' blueprint
@@ -21,10 +24,6 @@ def create_app(config_name):
 
     return app
 
-"""
-# Local
+
 if __name__ == "__main__":
-    create_app(CONFIG).run('127.0.0.1', 5016, debug=True)
-"""
-if __name__ == "__main__":
-    create_app('a').run('0.0.0.0', 8084, debug=True)
+    create_app('development').run('0.0.0.0', 8084)
