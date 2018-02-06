@@ -31,7 +31,6 @@ def login():
 
         # Login Success
         if indicator:
-            #print("success")
             response['state'] = True
             data = dict()
             data['userid'] = indicator['user_id']
@@ -45,7 +44,6 @@ def login():
             response['data'] = data
         # Login Fail
         else:
-            #print("fail")
             response['state'] = False
             error = dict()
             error['errorCode'] = LOGIN_ERR
