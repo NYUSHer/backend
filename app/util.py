@@ -36,8 +36,8 @@ def query_fetch(sql, config):
 
 def auth_required(fn):
     def wrapper(*args, **kwargs):
-        user_id = request.form['user_id']
-        token = request.form['user_token']
+        user_id = request.headers['userid']
+        token = request.headers['token']
         sql = "SELECT user_tokens FROM users WHERE user_id = '{}'".format(user_id)
         user_token = query_fetch(sql, DB)
         if user_token:
