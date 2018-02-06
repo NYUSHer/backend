@@ -13,7 +13,7 @@ UID_ERR = "103"
 class SuccessResponse(object):
     def __init__(self):
         self.state = True
-        self.data = {}
+        self.data = {'placeHolder':1}
         self.timestamp = int(time())
 
     def __str__(self):
@@ -23,7 +23,7 @@ class SuccessResponse(object):
 class ErrorResponse(object):
     def __init__(self):
         self.state = False
-        self.error = {'errorCode': 000, 'errorMsg': 'blank'}
+        self.error = {'errorCode': 0, 'errorMsg': 'blank'}
         self.timestamp = int(time())
 
     def __str__(self):

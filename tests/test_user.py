@@ -10,6 +10,11 @@ class LoginTestCase(BasicTestCase):
             passwdtoken=password
         ), follow_redirects=True)
 
+    def check_email(self, user_email):
+        return self.client.post('/auth/check', data=dict(
+            email=user_email
+        ), follow_redirects=True)
+
     def test_login_success(self):
         rv = self.login('masaki@gmail.com', 'e27bbaa25e61:c28d7a9a8d9fde8a82008d54b38dab981d6730be')
         data = json.loads(rv.get_data().decode())
@@ -21,4 +26,16 @@ class LoginTestCase(BasicTestCase):
         data = json.loads(rv.get_data().decode())
         assert data['state'] is False
         assert data['error']['errorCode'] == "001"
+
+    def test_email_check_success(self):
+        rv = self.check_email('masaki@gmail.com')
+        data = json.loads(rv.get_data().decode())
+        assert data['state'] is True
+
+    def test_email_check_fail(self):
+        rv = self.check_email('john@gmail.com')
+        data = json.loads(rv.get_data().decode())
+        assert data['state'] is False
+
+
 

@@ -11,6 +11,17 @@ import uuid
 #          Non-Authorized Code            #
 #                                         #
 ###########################################
+@auth.route('/check', methods=['POST'])
+def check_email():
+    user_email = request.form['email']
+    sql = 'SELECT user_id FROM users WHERE user_email = "{}"'.format(user_email)
+    indicator = query_fetch(sql, DB)
+    if indicator:
+        response = SuccessResponse()
+    else:
+        response = ErrorResponse()
+    return jsonify(response.__dict__)
+
 
 @auth.route('/login', methods=['POST'])
 def login():
