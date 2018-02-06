@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from instance.config import config
 
-
 #db = SQLAlchemy()
 
 
@@ -18,7 +17,10 @@ def create_app(config_name):
     # Register blueprint
     # Add 'auth' blueprint
     from app.auth import auth as auth_blueprint
+    from app.post import post as post_blueprint
+
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(post_blueprint, url_prefix='/post')
 
     # Add directory and error page
 
@@ -26,4 +28,5 @@ def create_app(config_name):
 
 
 if __name__ == "__main__":
-    create_app('development').run('0.0.0.0', 8084)
+    myApp = create_app('development')
+    myApp.run('0.0.0.0', 8084)
