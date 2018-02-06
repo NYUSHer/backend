@@ -2,8 +2,8 @@ from flask import request, jsonify
 from time import time
 from app.util import CONFIG
 from app.auth import auth
-from app.util import LOGIN_ERR, REG_ERR, TOKEN_INVALID, EMAIL_ERR, UID_ERR
-from app.util import query_fetch, query_mod
+from app.util import LOGIN_ERR, REG_ERR
+from app.util import query_fetch, query_mod, auth_required
 import uuid
 
 DEBUG = True
@@ -123,31 +123,7 @@ def get_avatar():
 ###########################################
 
 
-def is_unauthorized(user_id, token):
-    sql = "SELECT user_tokens FROM users WHERE user_id = '{}'".format(user_id)
-    user_token = query_fetch(sql, CONFIG)
-    if user_token:
-        if token == user_token['user_tokens']:
-            return False
-        else:
-            return jsonify(dict(status=False,
-                                error={'errorCode': TOKEN_INVALID,
-                                       'errorMsg' : 'Token is invalid'},
-                                timestamp=int(time())
-                                ))
-    else:
-        return jsonify(dict(status=False,
-                            error={'errorCode': UID_ERR,
-                                   'errorMsg': 'UID does not exist'},
-                            timestamp=int(time())
-                            ))
-
-
 @auth.route('/authtest', methods=['GET', 'POST'])
+@auth_required
 def authtest():
-    user_id = request.form['user_id']
-    token = request.form['user_token']
-    not_auth = is_unauthorized(user_id, token)
-    if not_auth:
-        return not_auth
     return 'hello'
