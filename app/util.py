@@ -10,6 +10,25 @@ EMAIL_ERR = "102"
 UID_ERR = "103"
 
 
+class SuccessResponse(object):
+    def __init__(self):
+        self.state = True
+        self.data = {}
+        self.timestamp = int(time())
+
+    def __str__(self):
+        return str(self.__dict__)
+
+
+class ErrorResponse(object):
+    def __init__(self):
+        self.state = False
+        self.error = {'errorCode': 000, 'errorMsg': 'blank'}
+        self.timestamp = int(time())
+
+    def __str__(self):
+        return str(self.__dict__)
+
 def query_mod(sql, config):
     connection = pymysql.connect(**config)
     try:
