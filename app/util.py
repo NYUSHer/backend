@@ -29,6 +29,7 @@ class ErrorResponse(object):
     def __str__(self):
         return str(self.__dict__)
 
+
 def query_mod(sql, config):
     connection = pymysql.connect(**config)
     try:
@@ -53,7 +54,7 @@ def query_fetch(sql, config):
     return result
 
 
-def auth_required(fn):
+def token_required(fn):
     def wrapper(*args, **kwargs):
         user_id = request.headers['userid']
         token = request.headers['token']
@@ -74,4 +75,5 @@ def auth_required(fn):
                                        'errorMsg': 'UID does not exist'},
                                 timestamp=int(time())
                                 ))
+    wrapper.__name__ = fn.__name__
     return wrapper
