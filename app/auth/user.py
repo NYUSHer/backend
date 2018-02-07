@@ -103,13 +103,12 @@ def get_avatar():
     if response:
         return response['user_avatar']
 
+
 ###########################################
 #                                         #
 #             Authorized Code             #
 #                                         #
 ###########################################
-
-
 @auth.route('/authtest', methods=['GET', 'POST'])
 @token_required
 def authtest():

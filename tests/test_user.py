@@ -16,7 +16,7 @@ class LoginTestCase(BasicTestCase):
         ), follow_redirects=True)
 
     def test_login_success(self):
-        rv = self.login('masaki@gmail.com', 'e27bbaa25e61:c28d7a9a8d9fde8a82008d54b38dab981d6730be')
+        rv = self.login('hl2752@nyu.edu', '38db1d874425d645de1c30a8096c2eec')
         data = json.loads(rv.get_data().decode())
         assert data['state'] is True
         assert data['data']['userid'] is 1
