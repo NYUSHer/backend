@@ -8,8 +8,4 @@ from util.sendMail import send_mail
 #                                         #
 ###########################################
 
-@post.route('/sendmail', methods=['GET', 'POST'])
-def sendmail():
-    send_mail("hi", ["mk5986@nyu.edu"], "hello")
-    return "Sent."
 
