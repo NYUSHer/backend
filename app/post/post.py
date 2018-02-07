@@ -4,8 +4,6 @@ from util.sendMail import send_mail
 
 ###########################################
 #                                         #
-#          Non-Authorized Code            #
+#            Authorized Code              #
 #                                         #
 ###########################################
-
-

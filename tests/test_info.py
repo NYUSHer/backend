@@ -28,4 +28,3 @@ class LoginTestCase(BasicTestCase):
         data = json.loads(rv.get_data().decode())
         assert data['state'] is False
         assert data['error']['errorCode'] == '101'
-

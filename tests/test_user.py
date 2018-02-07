@@ -36,6 +36,3 @@ class LoginTestCase(BasicTestCase):
         rv = self.check_email('john@gmail.com')
         data = json.loads(rv.get_data().decode())
         assert data['state'] is False
-
-
-
