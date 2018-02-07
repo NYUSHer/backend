@@ -1,5 +1,5 @@
 from app.post import post
-from app.sendMail import send_mail
+from util.sendMail import send_mail
 
 
 ###########################################
