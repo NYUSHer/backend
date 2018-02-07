@@ -13,7 +13,7 @@ UID_ERR = "103"
 class SuccessResponse(object):
     def __init__(self):
         self.state = True
-        self.data = {}
+        self.data = {'placeHolder':1}
         self.timestamp = int(time())
 
     def __str__(self):
@@ -23,11 +23,12 @@ class SuccessResponse(object):
 class ErrorResponse(object):
     def __init__(self):
         self.state = False
-        self.error = {'errorCode': 000, 'errorMsg': 'blank'}
+        self.error = {'errorCode': 0, 'errorMsg': 'blank'}
         self.timestamp = int(time())
 
     def __str__(self):
         return str(self.__dict__)
+
 
 def query_mod(sql, config):
     connection = pymysql.connect(**config)
@@ -53,7 +54,7 @@ def query_fetch(sql, config):
     return result
 
 
-def auth_required(fn):
+def token_required(fn):
     def wrapper(*args, **kwargs):
         user_id = request.headers['userid']
         token = request.headers['token']
@@ -63,15 +64,16 @@ def auth_required(fn):
             if token == user_token['user_tokens']:
                 return fn(*args, **kwargs)
             else:
-                return jsonify(dict(status=False,
+                return jsonify(dict(state=False,
                                     error={'errorCode': TOKEN_INVALID,
                                            'errorMsg' : 'Token is invalid'},
                                     timestamp=int(time())
                                     ))
         else:
-            return jsonify(dict(status=False,
+            return jsonify(dict(state=False,
                                 error={'errorCode': UID_ERR,
                                        'errorMsg': 'UID does not exist'},
                                 timestamp=int(time())
                                 ))
+    wrapper.__name__ = fn.__name__
     return wrapper

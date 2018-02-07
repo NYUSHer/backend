@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from app.auth import auth
-from app.util import LOGIN_ERR, REG_ERR
-from app.util import query_fetch, query_mod, auth_required, SuccessResponse, ErrorResponse
+from app.util import LOGIN_ERR, REG_ERR, UID_ERR
+from app.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
 from instance.config import VERBOSE, DB
 import uuid
 
@@ -11,6 +11,17 @@ import uuid
 #          Non-Authorized Code            #
 #                                         #
 ###########################################
+@auth.route('/check', methods=['POST'])
+def check_email():
+    user_email = request.form['email']
+    sql = 'SELECT user_id FROM users WHERE user_email = "{}"'.format(user_email)
+    indicator = query_fetch(sql, DB)
+    if indicator:
+        response = SuccessResponse()
+    else:
+        response = ErrorResponse()
+    return jsonify(response.__dict__)
+
 
 @auth.route('/login', methods=['POST'])
 def login():
@@ -100,6 +111,35 @@ def get_avatar():
 
 
 @auth.route('/authtest', methods=['GET', 'POST'])
-@auth_required
+@token_required
 def authtest():
     return 'hello'
+
+
+@auth.route('/info', methods=['POST'])
+@token_required
+def get_info():
+    user_id = request.headers['userid']
+    if VERBOSE:
+        print(user_id)
+
+    # retrieve user's info from DB
+    sql = 'SELECT user_name, user_email, user_motto, user_avatar ' \
+          'FROM users WHERE user_id = "{}" '.format(user_id)
+    indicator = query_fetch(sql, DB)
+    if VERBOSE:
+        print(indicator)
+
+    # User exists
+    if indicator:
+        response = SuccessResponse()
+        response.data['email'] = indicator['user_email']
+        response.data['username'] = indicator['user_name']
+        response.data['imageuri'] = indicator['user_avatar']
+        response.data['motto'] = indicator['user_motto']
+    # User does not exist
+    else:
+        response = ErrorResponse()
+        response.error['errorCode'] = UID_ERR
+        response.error['errorMsg'] = "User ID does not exist"
+    return jsonify(response.__dict__)

@@ -1,15 +1,12 @@
 from app.post import post
 from app.sendMail import send_mail
+from app.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
 
 
 ###########################################
 #                                         #
-#          Non-Authorized Code            #
+#            Authorized Code              #
 #                                         #
 ###########################################
 
-@post.route('/sendmail', methods=['GET', 'POST'])
-def sendmail():
-    send_mail("hi", ["mk5986@nyu.edu"], "hello")
-    return "Sent."
 
