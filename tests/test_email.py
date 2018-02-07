@@ -8,6 +8,6 @@ class EmailTestCase(BasicTestCase):
                                 follow_redirects=True)
 
     def test_send_email(self):
-        rv = self.send_email(1, '4f3424ea-edb8-4a78-a120-e04973ae12fe', "Test Email", ["mk5986@nyu.edu"], "This is just a test.")
+        rv = self.send_email(1, 'eb0df5ff-dcfb-497c-a396-cf3cf4f13a78', "Test Email", ["hl2752@nyu.edu"], "This is just a test.")
         data = rv.get_data().decode()
         assert data == "Sent."

@@ -9,6 +9,6 @@ class LoginTestCase(BasicTestCase):
         follow_redirects=True)
 
     def test_authentication_success(self):
-        rv = self.auth(1, '1cdb1ca2-b81a-43c4-b51c-aec4fe2e9cce')
+        rv = self.auth(1, 'eb0df5ff-dcfb-497c-a396-cf3cf4f13a78')
         data = rv.get_data().decode()
         assert data == 'hello'

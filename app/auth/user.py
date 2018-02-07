@@ -1,12 +1,7 @@
 from flask import request, jsonify
 from app.auth import auth
-<<<<<<< HEAD
-from app.util import LOGIN_ERR, REG_ERR, UID_ERR
-from app.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
-=======
 from util.util import LOGIN_ERR, REG_ERR, UID_ERR
 from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
->>>>>>> master
 from instance.config import VERBOSE, DB
 import uuid
 

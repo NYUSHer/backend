@@ -1,9 +1,9 @@
 from flask_mail import Message, Mail
 from flask import current_app
-from flask import request, jsonify
+from flask import request
 import threading
 from app.post import post
-from app.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
+from util.util import token_required
 
 
 mail = None
