@@ -1,7 +1,7 @@
 from flask import request, jsonify, abort, url_for
 from app.auth import auth
-from util.util import LOGIN_ERR, REG_ERR, UID_ERR, verify_err_res
-from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
+from util.util import LOGIN_ERR, REG_ERR, UID_ERR, VERIFY_ERR
+from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse, time
 from util.sendMail import send_mail
 from instance.config import VERBOSE, DB
 import uuid
@@ -14,7 +14,7 @@ import uuid
 ###########################################
 @auth.route('/check', methods=['POST'])
 def check_email():
-    user_email = request.form.get.get('email')
+    user_email = request.form.get('email')
     sql = 'SELECT user_id FROM users WHERE user_email = "{}"'.format(user_email)
     indicator = query_fetch(sql, DB)
     if indicator:
@@ -34,11 +34,23 @@ def login():
     # user must finish all verifications to login
     sql = 'SELECT user_key FROM users WHERE user_email = "{}"'.format(user_email)
     key = query_fetch(sql, DB)
-    if key is not None:
-        return verify_err_res
+    if key is None:
+        return jsonify(dict(state=False,
+                            error={'errorCode': LOGIN_ERR,
+                                   'errorMsg': 'User does not exist.'},
+                            timestamp=int(time())
+                            ))
+    elif key['user_key'] is not None:
+        return jsonify(dict(state=False,
+                            error={'errorCode': VERIFY_ERR,
+                                   'errorMsg': 'Verification has not been finished.'},
+                            timestamp=int(time())
+                            ))
 
+    # user chooses to login by email
     if user_pass == "NYUSHer_by_email_login":
         return login_by_email(user_email)
+
     # Check of the input email and token match database
     sql = 'SELECT user_id FROM users WHERE user_email = "{}" and user_pass = "{}"'.format(user_email, user_pass)
     indicator = query_fetch(sql, DB)
@@ -59,7 +71,7 @@ def login():
     else:
         response = ErrorResponse()
         response.error['errorCode'] = LOGIN_ERR
-        response.error['errorMsg'] = "Email or Password did not match database"
+        response.error['errorMsg'] = "Password is incorrect"
     return jsonify(response.__dict__)
 
 
@@ -211,7 +223,8 @@ def set_info():
         data = request.form.get(params[i])
         if data is not None:
             info_2_set[column_names[i]] = data
-
+    if VERBOSE:
+        print(info_2_set)
     for param in info_2_set.keys():
         if param == 'user_pass':
             key = uuid.uuid4()

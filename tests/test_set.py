@@ -20,12 +20,12 @@ class LoginTestCase(BasicTestCase):
     def test_set_normal(self):
         username = 'maxee'
         motto = 'Every night I live and die'
-        rv = self.set_info(1, 'bdd27e84-2ade-4515-9ae9-3be1f6c24ea9', username=username, motto=motto)
+        rv = self.set_info(1, '16f8d711-a1f1-438d-932c-a83c6c5c1521', username=username, motto=motto, imageuri='nowhere')
         data = rv.get_data().decode()
         assert data == 'done'
 
-    def test_set_normal(self):
+    def test_set_passwd(self):
         passwdtoken = 'ec5e1e94c042dda33822701a45eb5e30'
-        rv = self.set_info(1, 'bdd27e84-2ade-4515-9ae9-3be1f6c24ea9', passwdtoken=passwdtoken)
+        rv = self.set_info(1, '16f8d711-a1f1-438d-932c-a83c6c5c1521', passwdtoken=passwdtoken)
         data = rv.get_data().decode()
         assert data == 'done'
