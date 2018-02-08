@@ -22,7 +22,7 @@ RUN addgroup mysql mysql
 
 RUN pip3 install flask \
     flask-sqlalchemy \
-    pymyspl \
+    pymysql \
     flask-mail
 
 RUN git clone https://github.com/NYUSHer/backend /backend
