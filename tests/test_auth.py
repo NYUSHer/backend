@@ -1,5 +1,4 @@
 from tests.test_basic import BasicTestCase
-import json
 
 
 class LoginTestCase(BasicTestCase):
@@ -11,4 +10,5 @@ class LoginTestCase(BasicTestCase):
     def test_authentication_success(self):
         rv = self.auth(1, 'eb0df5ff-dcfb-497c-a396-cf3cf4f13a78')
         data = rv.get_data().decode()
+        print(data)
         assert data == 'hello'
