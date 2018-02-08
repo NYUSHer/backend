@@ -1,12 +1,12 @@
 import pymysql.cursors
 from time import time
-from flask import request, jsonify
+from flask import request, jsonify, abort
 from instance.config import DB
 
 LOGIN_ERR = "001"
 REG_ERR = "002"
 TOKEN_INVALID = "101"
-EMAIL_ERR = "102"
+VERIFY_ERR = "102"
 UID_ERR = "103"
 
 
@@ -56,13 +56,21 @@ def query_fetch(sql, config):
 
 def token_required(fn):
     def wrapper(*args, **kwargs):
-        user_id = request.headers['userid']
-        token = request.headers['token']
-        sql = "SELECT user_tokens FROM users WHERE user_id = '{}'".format(user_id)
-        user_token = query_fetch(sql, DB)
-        if user_token:
-            if token == user_token['user_tokens']:
+        user_id = request.headers.get('userid')
+        token = request.headers.get('token')
+        if user_id is None or token is None:
+            abort(401)
+        sql = "SELECT user_tokens, user_key FROM users WHERE user_id = '{}'".format(user_id)
+        resp = query_fetch(sql, DB)
+        if resp:
+            if token == resp['user_tokens'] and resp['user_key'] is None:
                 return fn(*args, **kwargs)
+            elif resp['user_key'] is not None:
+                return jsonify(dict(state=False,
+                                    error={'errorCode': VERIFY_ERR,
+                                           'errorMsg' : 'The user has not been verified.'},
+                                    timestamp=int(time())
+                                    ))
             else:
                 return jsonify(dict(state=False,
                                     error={'errorCode': TOKEN_INVALID,
