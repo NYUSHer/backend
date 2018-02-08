@@ -9,24 +9,6 @@ TOKEN_INVALID = "101"
 VERIFY_ERR = "102"
 UID_ERR = "103"
 
-verify_err_res = jsonify(dict(state=False,
-                              error={'errorCode': VERIFY_ERR,
-                                     'errorMsg' : 'The user has not been verified.'},
-                              timestamp=int(time())
-                              ))
-
-token_err_res = jsonify(dict(state=False,
-                             error={'errorCode': TOKEN_INVALID,
-                                    'errorMsg' : 'Token is invalid'},
-                             timestamp=int(time())
-                             ))
-
-uid_err_res = jsonify(dict(state=False,
-                           error={'errorCode': UID_ERR,
-                                  'errorMsg': 'UID does not exist'},
-                           timestamp=int(time())
-                           ))
-
 class SuccessResponse(object):
     def __init__(self):
         self.state = True
@@ -83,10 +65,22 @@ def token_required(fn):
             if token == resp['user_tokens'] and resp['user_key'] is None:
                 return fn(*args, **kwargs)
             elif resp['user_key'] is not None:
-                return verify_err_res
+                return jsonify(dict(state=False,
+                                    error={'errorCode': VERIFY_ERR,
+                                           'errorMsg' : 'The user has not been verified.'},
+                                             timestamp=int(time())
+                                             ))
             else:
-                return token_err_res
+                return jsonify(dict(state=False,
+                                    error={'errorCode': TOKEN_INVALID,
+                                           'errorMsg' : 'Token is invalid'},
+                                    timestamp=int(time())
+                                    ))
         else:
-            return uid_err_res
+            return jsonify(dict(state=False,
+                           error={'errorCode': UID_ERR,
+                                  'errorMsg': 'UID does not exist'},
+                                timestamp=int(time())
+                                ))
     wrapper.__name__ = fn.__name__
     return wrapper
