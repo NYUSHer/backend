@@ -9,6 +9,23 @@ TOKEN_INVALID = "101"
 VERIFY_ERR = "102"
 UID_ERR = "103"
 
+verify_err_res = jsonify(dict(state=False,
+                              error={'errorCode': VERIFY_ERR,
+                                     'errorMsg' : 'The user has not been verified.'},
+                              timestamp=int(time())
+                              ))
+
+token_err_res = jsonify(dict(state=False,
+                             error={'errorCode': TOKEN_INVALID,
+                                    'errorMsg' : 'Token is invalid'},
+                             timestamp=int(time())
+                             ))
+
+uid_err_res = jsonify(dict(state=False,
+                           error={'errorCode': UID_ERR,
+                                  'errorMsg': 'UID does not exist'},
+                           timestamp=int(time())
+                           ))
 
 class SuccessResponse(object):
     def __init__(self):
@@ -66,22 +83,10 @@ def token_required(fn):
             if token == resp['user_tokens'] and resp['user_key'] is None:
                 return fn(*args, **kwargs)
             elif resp['user_key'] is not None:
-                return jsonify(dict(state=False,
-                                    error={'errorCode': VERIFY_ERR,
-                                           'errorMsg' : 'The user has not been verified.'},
-                                    timestamp=int(time())
-                                    ))
+                return verify_err_res
             else:
-                return jsonify(dict(state=False,
-                                    error={'errorCode': TOKEN_INVALID,
-                                           'errorMsg' : 'Token is invalid'},
-                                    timestamp=int(time())
-                                    ))
+                return token_err_res
         else:
-            return jsonify(dict(state=False,
-                                error={'errorCode': UID_ERR,
-                                       'errorMsg': 'UID does not exist'},
-                                timestamp=int(time())
-                                ))
+            return uid_err_res
     wrapper.__name__ = fn.__name__
     return wrapper

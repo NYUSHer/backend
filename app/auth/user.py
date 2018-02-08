@@ -1,6 +1,6 @@
 from flask import request, jsonify, abort, url_for
 from app.auth import auth
-from util.util import LOGIN_ERR, REG_ERR, UID_ERR
+from util.util import LOGIN_ERR, REG_ERR, UID_ERR, verify_err_res
 from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
 from util.sendMail import send_mail
 from instance.config import VERBOSE, DB
@@ -30,6 +30,12 @@ def login():
     user_pass = request.form.get('passwdtoken')
     if VERBOSE:
         print(user_email, user_pass)
+
+    # user must finish all verifications to login
+    sql = 'SELECT user_key FROM users WHERE user_email = "{}"'.format(user_email)
+    key = query_fetch(sql, DB)
+    if key is not None:
+        return verify_err_res
 
     if user_pass == "NYUSHer_by_email_login":
         return login_by_email(user_email)
@@ -103,7 +109,7 @@ def register():
     else:
         response = SuccessResponse()
         user_token = uuid.uuid4()
-        key   = uuid.uuid4()
+        key = uuid.uuid4()
         sql = "INSERT INTO users(user_name, user_email, user_pass, user_tokens, user_key) VALUES ('{}', '{}', '{}', '{}', '{}')"\
             .format(user_name, user_email, user_pass, user_token, key)
         if VERBOSE:
