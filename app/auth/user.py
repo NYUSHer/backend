@@ -1,4 +1,5 @@
-from flask import request, jsonify, abort, url_for
+from flask import request, jsonify, abort, url_for, render_template
+from flask_mail import Message
 from app.auth import auth
 from util.util import LOGIN_ERR, REG_ERR, UID_ERR, VERIFY_ERR
 from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse, time
@@ -76,7 +77,7 @@ def login():
 
 
 def login_by_email(user_email):
-    sql = 'SELECT user_id FROM users WHERE user_email = "{}"'.format(user_email)
+    sql = 'SELECT user_id, user_name FROM users WHERE user_email = "{}"'.format(user_email)
     indicator = query_fetch(sql, DB)
     # Login Success
     if indicator:
@@ -92,8 +93,11 @@ def login_by_email(user_email):
         query_mod(sql, DB)
 
         # TODO: send email here
-        verify_url = DOMAIN + ':' + PORT + url_for('auth.verify', key=key)
-        send_mail([user_email], 'verify your login', verify_url)
+        verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
+        params = dict(USER=indicator['user_name'], URL=verify_url)
+        msg = Message('NYUSHer: Verify Your Login', sender='nyusher@yeah.net', recipients=[user_email])
+        msg.html = render_template('login-verification.html', **params)
+        send_mail(msg)
     # Login Fail
     else:
         response = ErrorResponse()
@@ -139,14 +143,18 @@ def register():
         response.data['token'] = user_token
 
         # TODO: send email here
-        verify_url = DOMAIN + ':' + PORT + url_for('auth.verify', key=key)
-        send_mail([user_email], 'verify your registration', verify_url)
+        verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
+        params = dict(USER=user_name, USER_EMAIL=user_email, URL=verify_url)
+        print(verify_url)
+        msg = Message('NYUSHer: Verify Your Email', sender='nyusher@yeah.net', recipients=[user_email])
+        msg.html = render_template('email-verification.html', **params)
+        send_mail(msg)
     if VERBOSE:
         print(response)
     return jsonify(response.__dict__)
 
 
-# TODO: is that alright?
+# TODO: not finished
 @auth.route('/avatar', methods=['POST'])
 def get_avatar():
     user_id = request.form.get('userid')
@@ -165,10 +173,10 @@ def verify(key=None):
     indicator = query_fetch(sql, DB)
     if indicator:
         sql = "UPDATE users SET user_key = null WHERE user_key = '{}' ".format(key)
-        query_mod(sql, DB)  # TODO: set expiration date?
-        return 'Verification is done!'
+        query_mod(sql, DB)
+        return render_template('verification-success.html')
     else:
-        return 'This url has expired.'
+        return render_template('URL-expired.html')
 
 
 ###########################################
@@ -232,10 +240,16 @@ def set_info():
                 .format(key, user_id)
             query_mod(sql, DB)
             # TODO: send email here
-            sql = 'SELECT user_email FROM users WHERE user_id = "{}"'.format(user_id)
-            user_email = query_fetch(sql, DB)['user_email']
-            verify_url = DOMAIN + ':' + PORT + url_for('auth.verify', key=key)
-            send_mail([user_email], 'verify your password change.', verify_url)
+            sql = 'SELECT user_email, user_name FROM users WHERE user_id = "{}"'.format(user_id)
+            info = query_fetch(sql, DB)
+            user_name = info['user_name']
+            user_email = info['user_email']
+            verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
+            params = dict(USER=user_name, URL=verify_url)
+            print(verify_url)
+            msg = Message('NYUSHer: Verify Your Password Change', sender='nyusher@yeah.net', recipients=[user_email])
+            msg.html = render_template('password-verification.html', **params)
+            send_mail(msg)
 
         sql = "UPDATE users SET {} = '{}' WHERE user_id = {} " \
             .format(param, info_2_set[param], user_id)

@@ -5,7 +5,7 @@ def login_test():
     test_data = {"email": "hl2752@nyu.edu", "passwdtoken": "NYUSHer_by_email_login"}
     test_data_urlencode = parse.urlencode(test_data)
     test_data_urlencode = bytes(test_data_urlencode, "utf-8")
-    requrl = "http://localhost:8084/auth/login"  # Adjust port
+    requrl = "http://localhost:8080/auth/login"  # Adjust port
     req = request.Request(url=requrl, data=test_data_urlencode)
     res_data = request.urlopen(req)
     res = res_data.read()
@@ -36,4 +36,4 @@ def set_test():
     print(res)
 
 
-register_test()
+login_test()
