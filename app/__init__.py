@@ -28,5 +28,5 @@ def create_app(config_name):
 
 
 if __name__ == "__main__":
-    myApp = create_app('development')
+    myApp = create_app('testing')
     myApp.run('localhost', 8084)
