@@ -3,7 +3,7 @@ from app.auth import auth
 from util.util import LOGIN_ERR, REG_ERR, UID_ERR, VERIFY_ERR
 from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse, time
 from util.sendMail import send_mail
-from instance.config import VERBOSE, DB
+from instance.config import VERBOSE, DB, DOMAIN, PORT
 import uuid
 
 
@@ -92,7 +92,7 @@ def login_by_email(user_email):
         query_mod(sql, DB)
 
         # TODO: send email here
-        verify_url = 'http://localhost:8084' + url_for('auth.verify', key=key)
+        verify_url = DOMAIN + ':' + PORT + url_for('auth.verify', key=key)
         send_mail([user_email], 'verify your login', verify_url)
     # Login Fail
     else:
@@ -139,7 +139,7 @@ def register():
         response.data['token'] = user_token
 
         # TODO: send email here
-        verify_url = 'http://localhost:8084' + url_for('auth.verify', key=key)
+        verify_url = DOMAIN + ':' + PORT + url_for('auth.verify', key=key)
         send_mail([user_email], 'verify your registration', verify_url)
     if VERBOSE:
         print(response)
@@ -234,7 +234,7 @@ def set_info():
             # TODO: send email here
             sql = 'SELECT user_email FROM users WHERE user_id = "{}"'.format(user_id)
             user_email = query_fetch(sql, DB)['user_email']
-            verify_url = 'http://localhost:8084' + url_for('auth.verify', key=key)
+            verify_url = DOMAIN + ':' + PORT + url_for('auth.verify', key=key)
             send_mail([user_email], 'verify your password change.', verify_url)
 
         sql = "UPDATE users SET {} = '{}' WHERE user_id = {} " \

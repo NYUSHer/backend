@@ -15,7 +15,7 @@ def login_test():
 
 
 def register_test():
-    test_data = {"email": "1115855331@qq.com", "username": "hongyi", "passwdtoken": "202cb962ac59075b964b07152d234b70"}
+    test_data = {"email": "jy2122@nyu.edu", "username": "jerry", "passwdtoken": "202cb962ac59075b964b07152d234b70"}
     test_data_urlencode = parse.urlencode(test_data)
     test_data_urlencode = bytes(test_data_urlencode, "utf-8")
     requrl = "http://localhost:8084/auth/register"  # Adjust port

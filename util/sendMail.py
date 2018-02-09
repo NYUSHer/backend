@@ -10,6 +10,7 @@ def send_mail(recip, subject, content):
     msg.body = content
     app = current_app._get_current_object()
     threading._start_new_thread(send_one_mail, (app, msg))
+    print('An email has been sent to {}'.format(recip))
     return "Sent."
 
 

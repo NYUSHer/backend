@@ -1,6 +1,7 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+#from flask_sqlalchemy import SQLAlchemy
 from instance.config import config
+from instance.config import DOMAIN, PORT
 
 #db = SQLAlchemy()
 
@@ -28,5 +29,5 @@ def create_app(config_name):
 
 
 if __name__ == "__main__":
-    myApp = create_app('testing')
-    myApp.run('localhost', 8084)
+    myApp = create_app('development')
+    myApp.run(DOMAIN, PORT)
