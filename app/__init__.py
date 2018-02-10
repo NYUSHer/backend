@@ -30,4 +30,4 @@ def create_app(config_name):
 
 if __name__ == "__main__":
     myApp = create_app('development')
-    myApp.run(DOMAIN, PORT)
+    myApp.run('0.0.0.0', PORT)
