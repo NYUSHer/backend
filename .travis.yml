@@ -1,0 +1,15 @@
+language: python
+python:
+ - "3.6"
+
+before_install: 
+ - sudo apt-get update
+
+install:
+ - pip3 install flask flask-sqlalchemy flask-mail pymysql
+
+notifications:
+  email: true
+
+script:
+ - python3 tests/urllib_manual_test.py
