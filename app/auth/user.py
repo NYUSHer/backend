@@ -193,7 +193,7 @@ def authtest():
 @auth.route('/info', methods=['POST'])
 @token_required
 def get_info():
-    user_id = request.headers.get('userid')
+    user_id = request.form.get('userid')  # TODO: change api book @jerry
     if VERBOSE:
         print(user_id)
 
