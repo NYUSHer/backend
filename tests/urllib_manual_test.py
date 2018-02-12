@@ -2,7 +2,7 @@ from urllib import request, parse
 
 
 def login_test():
-    test_data = {"email": "hl2752@nyu.edu", "passwdtoken": "NYUSHer_by_email_login"}
+    test_data = {"email": "lihongyigg@163.com", "passwdtoken": "NYUSHer_by_email_login"}
     test_data_urlencode = parse.urlencode(test_data)
     test_data_urlencode = bytes(test_data_urlencode, "utf-8")
     requrl = "http://localhost:8080/auth/login"  # Adjust port
@@ -15,10 +15,10 @@ def login_test():
 
 
 def register_test():
-    test_data = {"email": "jy2122@nyu.edu", "username": "jerry", "passwdtoken": "202cb962ac59075b964b07152d234b70"}
+    test_data = {"email": "hl2752@nyu.edu", "username": "maxee", "passwdtoken": "202cb962ac59075b964b07152d234b70"}
     test_data_urlencode = parse.urlencode(test_data)
     test_data_urlencode = bytes(test_data_urlencode, "utf-8")
-    requrl = "http://localhost:8084/auth/register"  # Adjust port
+    requrl = "http://0.0.0.0:8080/auth/register"  # Adjust port
     req = request.Request(url=requrl, data=test_data_urlencode)
     res_data = request.urlopen(req)
     res = res_data.read()
@@ -36,4 +36,4 @@ def set_test():
     print(res)
 
 
-login_test()
+register_test()

@@ -112,7 +112,7 @@ def register():
     user_name = request.form.get('username')
     user_pass = request.form.get('passwdtoken')
 
-    sql = 'SELECT user_id FROM users WHERE user_name = "{}"'.format(user_name)
+    sql = 'SELECT user_id FROM users WHERE user_email = "{}"'.format(user_email)
     indicator = query_fetch(sql, DB)
 
     # Invalid (user exists)
@@ -257,4 +257,4 @@ def set_info():
             print(sql)
         query_mod(sql, DB)
 
-    return 'done'
+    return get_info()
