@@ -12,3 +12,4 @@ class LoginTestCase(BasicTestCase):
         data = rv.get_data().decode()
         print(data)
         assert data == 'hello'
+

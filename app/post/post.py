@@ -1,12 +1,9 @@
 from app.post import post
-from flask import request, jsonify
-from app.auth import auth
-from util.util import LOGIN_ERR, REG_ERR, UID_ERR
-from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse
+from flask import jsonify
+from util.util import query_fetch, query_mod, PostList, query_dict_fetch
 from instance.config import VERBOSE, DB
 from util.util import token_required
 from flask import request
-import uuid
 
 
 ###########################################
@@ -15,19 +12,27 @@ import uuid
 #                                         #
 ###########################################
 
-@post.route('/list', methods=['GET'])
+@post.route('/list', methods=['POST'])
 @token_required
 def get_list():
-    pass
-
-"""
-NOTE: Tags must be deserialized first
-"""
+    temp = request.form.get('offset')
+    size = request.form.get('size')
+    offset = (int(temp)+1)*int(size)
+    sql = "SELECT pid, title, content, authorid, user_avatar FROM posts INNER JOIN users ON users.user_id = posts.authorid LIMIT '{}' OFFSET '{}'".format(size, offset)
+    if VERBOSE:
+        print('get list query:' + sql)
+    indicator = query_dict_fetch(sql, DB)
+    response = PostList()
+    response.data['offset'] = offset
+    response.data['size'] = size
+    response.data['count'] = len(indicator)
+    response.data['postlist'] = indicator
+    return jsonify(response.__dict__)
 
 
 """
 params:
-*offset(=0)
+*offset(=0)   
 *size(=10)
 
 data:
@@ -51,24 +56,46 @@ def post_submit():
     post_category = request.form.get('category')
     post_tags = request.form.get('tags')
     post_content = request.form.get('content')
-    post_by = request.headers.get('user_id')
+    post_id = request.form.get('pid')
+    post_by = request.form.get('authorid')
     if VERBOSE:
         print(post_title, post_category, post_tags, post_content)
-    sql = "INSERT INTO posts(post_content, post_tags, post_category, post_by) VALUES ('{}', '{}', '{}', '{}')" \
-        .format(post_content, post_tags, post_category, post_by)
 
-    if VERBOSE:
-        print("insert query:" + sql)
-    query_mod(sql, DB)
+    # Modify Existing Post
+    if post_id is not None:
+        # Check if user_id and post_by matches
+        sql = "SELECT authorid FROM posts WHERE pid = '{}'".format(post_id)
+        if VERBOSE:
+            print(sql)
+        indicator = query_fetch(sql, DB)
+        if indicator == post_by:
+            sql = "UPDATE posts SET title= '{}', category= '{}', tags= '{}', content= '{}' WHERE authorid = '{}'".format(post_title, post_category, post_tags, post_content, post_by)
+            if VERBOSE:
+                print(sql)
+            result = query_mod(sql, DB)
+            response = PostList()
+            if result:
+                response.data['pid'] = result['pid']
+                return jsonify(response.__dict__)
+    # New Post
+    else:
+        sql = "INSERT INTO posts(title, content, tags, category, authorid) VALUES ('{}', '{}', '{}', '{}', '{}')" \
+            .format(post_title, post_content, post_tags, post_category, post_by)
 
-    # Get the generated post_id
-    sql = "SELECT post_id FROM posts WHERE post_category = '{}' AND post_content = '{}' AND post_by = '{}'"\
-        .format(post_category, post_content, post_by)
-    if VERBOSE:
-        print("get post_id query:" + sql)
-    post_id = query_fetch(sql, DB)
-    if post_id:
-        return post_id['post_id']
+        if VERBOSE:
+            print("insert query:" + sql)
+        query_mod(sql, DB)
+
+        # Get the generated post_id
+        sql = "SELECT pid FROM posts WHERE category = '{}' AND content = '{}' AND authorid = '{}'"\
+            .format(post_category, post_content, post_by)
+        if VERBOSE:
+            print("get post_id query:" + sql)
+        indicator = query_fetch(sql, DB)
+        response = PostList()
+        if indicator:
+            response.data['pid'] = indicator['pid']
+            return jsonify(response.__dict__)
 
 
 """
@@ -87,27 +114,32 @@ pid
 @post.route('/get', methods=['GET'])
 @token_required
 def post_get():
-    pass
+    post_id = request.form.get('pid')
+    sql = "SELECT pid, title, category, tags, content FROM posts WHERE post_id = '{}'".format(post_id)
+    if VERBOSE:
+        print("post get query:" + sql)
+    indicator = query_fetch(sql, DB)
+    response = PostList()
+    response.data['pid'] = indicator['pid']
+    response.data['title'] = indicator['title']
+    response.data['category'] = indicator['category']
+    """
+    NOTE: Tags must be deserialized first.
+          Split with comma
+    e.g. post_tags = 'dog, 2017, happy, weekend'
+    """
+    response.data['tags'] = indicator['tags']
+    response.data['content'] = indicator['content']
+    return jsonify(response.__dict__)
 
-
-"""
-params
-pid
-data
-pid
-title
-category
-tags
-content
-"""
 
 @post.route('/delete', methods=['POST'])
 @token_required
 def post_delete():
-    pass
-
-"""
-params:
- pid
-nodata
-"""
+    post_by = request.headers.get('authorid')
+    post_id = request.form.get('pid')
+    sql = "DELETE FROM posts WHERE authorid = '{}' AND pid = '{}'"\
+        .format(post_by, post_id)
+    if VERBOSE:
+        print("delete post" + sql)
+    query_mod(sql, DB)
