@@ -1,6 +1,6 @@
 from app.post import post
 from flask import jsonify
-from util.util import query_fetch, query_mod, PostList, query_dict_fetch
+from util.util import query_fetch, query_mod, PostList, query_dict_fetch, fetch_all
 from instance.config import VERBOSE, DB
 from util.util import token_required
 from flask import request
@@ -49,6 +49,7 @@ postlist.each => {
     }
 """
 
+
 @post.route('/submit', methods=['POST'])
 @token_required
 def post_submit():
@@ -56,27 +57,27 @@ def post_submit():
     post_category = request.form.get('category')
     post_tags = request.form.get('tags')
     post_content = request.form.get('content')
-    post_id = request.form.get('pid')
     post_by = request.form.get('authorid')
     if VERBOSE:
-        print(post_title, post_category, post_tags, post_content)
+        print(post_title, post_category, post_tags, post_content, post_by)
 
     # Modify Existing Post
-    if post_id is not None:
+    if request.form.get('pid') is not None:
+        post_id = request.form.get('pid')
         # Check if user_id and post_by matches
         sql = "SELECT authorid FROM posts WHERE pid = '{}'".format(post_id)
         if VERBOSE:
             print(sql)
         indicator = query_fetch(sql, DB)
-        if indicator == post_by:
+        user_id = request.headers.get('userid')
+        if indicator['authorid'] == str(user_id):
             sql = "UPDATE posts SET title= '{}', category= '{}', tags= '{}', content= '{}' WHERE authorid = '{}'".format(post_title, post_category, post_tags, post_content, post_by)
             if VERBOSE:
                 print(sql)
-            result = query_mod(sql, DB)
+            query_mod(sql, DB)
             response = PostList()
-            if result:
-                response.data['pid'] = result['pid']
-                return jsonify(response.__dict__)
+            response.data['pid'] = post_id
+            return jsonify(response.__dict__)
     # New Post
     else:
         sql = "INSERT INTO posts(title, content, tags, category, authorid) VALUES ('{}', '{}', '{}', '{}', '{}')" \
@@ -92,8 +93,8 @@ def post_submit():
         if VERBOSE:
             print("get post_id query:" + sql)
         indicator = query_fetch(sql, DB)
-        response = PostList()
         if indicator:
+            response = PostList()
             response.data['pid'] = indicator['pid']
             return jsonify(response.__dict__)
 
@@ -111,33 +112,35 @@ data:
 pid
 """
 
+
 @post.route('/get', methods=['GET'])
 @token_required
 def post_get():
     post_id = request.form.get('pid')
-    sql = "SELECT pid, title, category, tags, content FROM posts WHERE post_id = '{}'".format(post_id)
+    sql = "SELECT title, category, tags, content FROM posts WHERE pid = '{}'".format(post_id)
     if VERBOSE:
         print("post get query:" + sql)
     indicator = query_fetch(sql, DB)
     response = PostList()
-    response.data['pid'] = indicator['pid']
-    response.data['title'] = indicator['title']
-    response.data['category'] = indicator['category']
-    """
-    NOTE: Tags must be deserialized first.
-          Split with comma
-    e.g. post_tags = 'dog, 2017, happy, weekend'
-    """
-    response.data['tags'] = indicator['tags']
-    response.data['content'] = indicator['content']
-    return jsonify(response.__dict__)
+    if indicator:
+        response.data['pid'] = post_id
+        response.data['title'] = indicator['title']
+        response.data['category'] = indicator['category']
+        """
+        NOTE: Tags must be deserialized first.
+              Split with comma
+        e.g. post_tags = 'dog, 2017, happy, weekend'
+        """
+        response.data['tags'] = indicator['tags']
+        response.data['content'] = indicator['content']
+        return jsonify(response.__dict__)
 
 
 @post.route('/delete', methods=['POST'])
 @token_required
 def post_delete():
     post_by = request.headers.get('authorid')
-    post_id = request.form.get('pid')
+    post_id = request.data.get('pid')
     sql = "DELETE FROM posts WHERE authorid = '{}' AND pid = '{}'"\
         .format(post_by, post_id)
     if VERBOSE:
