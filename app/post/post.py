@@ -18,14 +18,16 @@ def get_list():
     temp = request.form.get('offset')
     size = request.form.get('size')
     offset = (int(temp)+1)*int(size)
-    sql = "SELECT pid, title, content, authorid, user_avatar FROM posts INNER JOIN users ON users.user_id = posts.authorid LIMIT '{}' OFFSET '{}'".format(size, offset)
+    sql = "SELECT pid, title, content, authorid, user_avatar FROM " \
+          "posts INNER JOIN users ON users.user_id = posts.authorid LIMIT {} OFFSET {}".format(size, offset)
     if VERBOSE:
         print('get list query:' + sql)
     indicator = query_dict_fetch(sql, DB)
+    print(indicator)
     response = PostList()
-    response.data['offset'] = offset
+    response.data['offset'] = temp
     response.data['size'] = size
-    response.data['count'] = len(indicator)
+    response.data['count'] = str(len(indicator))
     response.data['postlist'] = indicator
     return jsonify(response.__dict__)
 
@@ -49,7 +51,6 @@ postlist.each => {
     }
 """
 
-
 @post.route('/submit', methods=['POST'])
 @token_required
 def post_submit():
@@ -70,8 +71,8 @@ def post_submit():
             print(sql)
         indicator = query_fetch(sql, DB)
         user_id = request.headers.get('userid')
-        if indicator['authorid'] == str(user_id):
-            sql = "UPDATE posts SET title= '{}', category= '{}', tags= '{}', content= '{}' WHERE authorid = '{}'".format(post_title, post_category, post_tags, post_content, post_by)
+        if indicator['authorid'] == int(user_id):
+            sql = "UPDATE posts SET title='{}', category='{}', tags='{}', content='{}' WHERE pid='{}'".format(post_title, post_category, post_tags, post_content, post_id)
             if VERBOSE:
                 print(sql)
             query_mod(sql, DB)
@@ -113,7 +114,7 @@ pid
 """
 
 
-@post.route('/get', methods=['GET'])
+@post.route('/get', methods=['POST'])
 @token_required
 def post_get():
     post_id = request.form.get('pid')
@@ -139,10 +140,11 @@ def post_get():
 @post.route('/delete', methods=['POST'])
 @token_required
 def post_delete():
-    post_by = request.headers.get('authorid')
-    post_id = request.data.get('pid')
+    post_by = request.headers.get('userid')
+    post_id = request.form.get('pid')
     sql = "DELETE FROM posts WHERE authorid = '{}' AND pid = '{}'"\
         .format(post_by, post_id)
     if VERBOSE:
         print("delete post" + sql)
     query_mod(sql, DB)
+    return jsonify({"pid": spost_id})

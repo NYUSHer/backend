@@ -31,7 +31,7 @@ class ErrorResponse(object):
 
 class PostList(object):
     def __init__(self):
-        self.data = {'pid': None, 'title': 'blank', 'category': 'blank', 'tags': 'blank', 'content': 'blank'}
+        self.data = {}
 
     def __str__(self):
         return str(self.__dict__)
@@ -78,12 +78,9 @@ def query_dict_fetch(sql, config):
     connection = pymysql.connect(**config)
     try:
         with connection.cursor() as cursor:
-            # Read all lines
+            # Read a single record
             cursor.execute(sql)
-            desc = cursor.description
-            column_names = [col[0] for col in desc]
-            result = [dict(zip(column_names, row))
-                    for row in cursor.fetchall()]
+            result = cursor.fetchall()
         connection.commit()
     finally:
         connection.close()
