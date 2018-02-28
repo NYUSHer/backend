@@ -114,6 +114,7 @@ def post_get():
         response.error['errorMsg'] = 'Post does not exist'#TODO
     return jsonify(response.__dict__)
 
+
 @post.route('/delete', methods=['POST'])
 @token_required
 def post_delete():

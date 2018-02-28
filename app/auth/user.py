@@ -92,7 +92,7 @@ def login_by_email(user_email):
             .format(token, key, indicator['user_id'])
         query_mod(sql, DB)
 
-        # TODO: send email here
+        # send email in this block
         verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
         params = dict(USER=indicator['user_name'], URL=verify_url)
         msg = Message('NYUSHer: Verify Your Login', sender='nyusher@yeah.net', recipients=[user_email])
@@ -142,7 +142,7 @@ def register():
         response.data['username'] = user_name
         response.data['token'] = user_token
 
-        # TODO: send email here
+        # send email in this block
         verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
         params = dict(USER=user_name, USER_EMAIL=user_email, URL=verify_url)
         print(verify_url)
@@ -239,14 +239,16 @@ def set_info():
             sql = "UPDATE users SET user_key = '{}' WHERE user_id = {} " \
                 .format(key, user_id)
             query_mod(sql, DB)
-            # TODO: send email here
+
+            # send email in this block
             sql = 'SELECT user_email, user_name FROM users WHERE user_id = "{}"'.format(user_id)
             info = query_fetch(sql, DB)
             user_name = info['user_name']
             user_email = info['user_email']
             verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
             params = dict(USER=user_name, URL=verify_url)
-            print(verify_url)
+            if VERBOSE:
+                print(verify_url)
             msg = Message('NYUSHer: Verify Your Password Change', sender='nyusher@yeah.net', recipients=[user_email])
             msg.html = render_template('password-verification.html', **params)
             send_mail(msg)
