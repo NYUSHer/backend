@@ -12,6 +12,19 @@ from flask import request
 #                                         #
 ###########################################
 
+
+def replace(text):
+    text = text.lower()
+    text = text.replace("'", "''")
+    text = text.replace('"', '\"')
+    text = text.replace("\\", "\ ")
+    text = text.replace("drop", '')
+    text = text.replace("select", '')
+    text = text.replace('--', '')
+    text = text.replace(';', '')
+    text = text.replace("delete", '')
+    return text
+
 @post.route('/list', methods=['POST'])
 @token_required
 def get_list():
@@ -39,10 +52,10 @@ def get_list():
 @post.route('/submit', methods=['POST'])
 @token_required
 def post_submit():
-    post_title = request.form.get('title')
-    post_category = request.form.get('category')
-    post_tags = request.form.get('tags')
-    post_content = request.form.get('content')
+    post_title = replace((request.form.get('title')).lower())
+    post_category = replace((request.form.get('category')).lower())
+    post_tags = replace((request.form.get('tags')).lower())
+    post_content = replace((request.form.get('content')).lower())
     post_by = request.form.get('authorid')
     if VERBOSE:
         print(post_title, post_category, post_tags, post_content, post_by)
