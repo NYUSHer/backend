@@ -25,7 +25,7 @@ def get_list():
     indicator = query_dict_fetch(sql, DB)
     if indicator:
         response = PostList()
-        response.data['offset'] = temp
+        response.data['offset'] = offset
         response.data['size'] = size
         response.data['count'] = str(len(indicator))
         response.data['postlist'] = indicator
