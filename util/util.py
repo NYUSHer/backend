@@ -31,6 +31,7 @@ class ErrorResponse(object):
 
 class PostList(object):
     def __init__(self):
+        self.state = True
         self.data = {}
 
     def __str__(self):
