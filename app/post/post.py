@@ -2,7 +2,7 @@ from app.post import post
 from flask import jsonify
 from util.util import query_fetch, query_mod, PostList, query_dict_fetch, ErrorResponse
 from instance.config import VERBOSE, DB
-from util.util import token_required
+from util.util import token_required, replace
 from flask import request
 
 
@@ -11,19 +11,6 @@ from flask import request
 #            Authorized Code              #
 #                                         #
 ###########################################
-
-
-def replace(text):
-    text = text.lower()
-    text = text.replace("'", "''")
-    text = text.replace('"', '\"')
-    text = text.replace("\\", "\ ")
-    text = text.replace("drop", '')
-    text = text.replace("select", '')
-    text = text.replace('--', '')
-    text = text.replace(';', '')
-    text = text.replace("delete", '')
-    return text
 
 @post.route('/list', methods=['POST'])
 @token_required
@@ -83,7 +70,8 @@ def post_submit():
         user_id = request.headers.get('userid')
         response = PostList()
         if indicator['authorid'] == int(user_id):
-            sql = "UPDATE posts SET title='{}', category='{}', tags='{}', content='{}' WHERE pid='{}'".format(post_title, post_category, post_tags, post_content, post_id)
+            sql = "UPDATE posts SET title='{}', category='{}', tags='{}', content='{}', timestamp = (CURRENT_TIMESTAMP) WHERE pid='{}'"\
+                .format(post_title, post_category, post_tags, post_content, post_id)
             if VERBOSE:
                 print(sql)
             query_mod(sql, DB)
@@ -173,6 +161,6 @@ def post_delete():
     # No authority to delete post
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = ''#TODO
-        response.error['errorMsg'] = 'No authority'#TODO
+        response.error['errorCode'] = '104'#TODO
+        response.error['errorMsg'] = 'No authority.'#TODO
     return jsonify(response.__dict__)

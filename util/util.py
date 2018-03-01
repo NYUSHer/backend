@@ -9,6 +9,7 @@ TOKEN_INVALID = "101"
 VERIFY_ERR = "102"
 UID_ERR = "103"
 
+
 class SuccessResponse(object):
     def __init__(self):
         self.state = True
@@ -96,6 +97,7 @@ def token_required(fn):
             abort(401)
         sql = "SELECT user_tokens, user_key FROM users WHERE user_id = '{}'".format(user_id)
         resp = query_fetch(sql, DB)
+        print("Verifying...")
         if resp:
             if token == resp['user_tokens'] and resp['user_key'] is None:
                 return fn(*args, **kwargs)
@@ -119,3 +121,17 @@ def token_required(fn):
                                 ))
     wrapper.__name__ = fn.__name__
     return wrapper
+
+
+# SQL injection mitigation
+def replace(text):
+    text = text.lower()
+    text = text.replace("'", "''")
+    text = text.replace('"', '\"')
+    text = text.replace("\\", "\ ")
+    text = text.replace("drop", '')
+    text = text.replace("select", '')
+    text = text.replace('--', '')
+    text = text.replace(';', '')
+    text = text.replace("delete", '')
+    return text
