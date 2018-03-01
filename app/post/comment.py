@@ -159,8 +159,8 @@ def edit_a_comment(cid=None):
     return jsonify(response.__dict__)
 
 
-@token_required
 @post.route('/comment/<int:cid>', methods=['DELETE'])
+@token_required
 def delete_a_comment(cid):
     uid = int(request.headers.get('userid'))
     sql = "SELECT uid FROM comments WHERE cid = '{}'".format(cid)
