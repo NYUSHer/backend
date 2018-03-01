@@ -56,7 +56,7 @@ def post_submit():
     post_category = replace((request.form.get('category')).lower())
     post_tags = replace((request.form.get('tags')).lower())
     post_content = replace((request.form.get('content')).lower())
-    post_by = request.form.get('authorid')
+    post_by = request.headers.get('userid')
     if VERBOSE:
         print(post_title, post_category, post_tags, post_content, post_by)
 
