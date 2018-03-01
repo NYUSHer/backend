@@ -60,8 +60,20 @@ def post_submit():
     if VERBOSE:
         print(post_title, post_category, post_tags, post_content, post_by)
 
+    # No empty title
+    if post_title == "":
+        response = ErrorResponse()
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = 'title cannot be empty'#TODO
+
+    # No empty content
+    elif post_content == "":
+        response = ErrorResponse()
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = 'content cannot be empty'#TODO
+
     # Modify Existing Post
-    if request.form.get('pid') is not None:
+    elif request.form.get('pid') is not None:
         post_id = request.form.get('pid')
         # Check if user_id and post_by matches
         sql = "SELECT authorid FROM posts WHERE pid = '{}'".format(post_id)
