@@ -12,7 +12,7 @@ from flask import request
 #                                         #
 ###########################################
 
-
+# SQL injection mitigation
 def replace(text):
     text = text.lower()
     text = text.replace("'", "''")
@@ -24,6 +24,7 @@ def replace(text):
     text = text.replace(';', '')
     text = text.replace("delete", '')
     return text
+
 
 @post.route('/list', methods=['POST'])
 @token_required
