@@ -84,7 +84,8 @@ def post_submit():
         user_id = request.headers.get('userid')
         response = PostList()
         if indicator['authorid'] == int(user_id):
-            sql = "UPDATE posts SET title='{}', category='{}', tags='{}', content='{}' WHERE pid='{}'".format(post_title, post_category, post_tags, post_content, post_id)
+            sql = "UPDATE posts SET title='{}', category='{}', tags='{}', content='{}', timestamp = (CURRENT_TIMESTAMP) WHERE pid='{}'"\
+                .format(post_title, post_category, post_tags, post_content, post_id)
             if VERBOSE:
                 print(sql)
             query_mod(sql, DB)
