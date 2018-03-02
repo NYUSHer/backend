@@ -108,5 +108,3 @@ app/util.py
 
 .DS_Store
 
-# instance
-/instance
