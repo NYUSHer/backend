@@ -17,7 +17,7 @@ def get_comments_for_a_user(suid=None):
     uid = int(request.headers.get("userid"))
     if uid != suid:
         response = ErrorResponse()
-        response.error['errorCode'] = '104'
+        response.error['errorCode'] = '104'  # TODO: put it in util
         response.error['errorMsg'] = "No authority."
         return jsonify(response.__dict__)
     try:
@@ -37,10 +37,10 @@ def get_comments_for_a_user(suid=None):
         response.data['size'] = size
         response.data['count'] = str(len(indicator))
         response.data['postlist'] = indicator
-    else:  # TODO: to be decided, I am not sure it is desirable - nothing found return error
+    else:  # TODO: to be decided, I am not sure it is desirable
         response = ErrorResponse()
         response.error['errorCode'] = 'No comments found.'
-        response.error['errorMsg'] = '105'
+        response.error['errorMsg'] = '105' # TODO: put it in util
     return jsonify(response.__dict__)
 
 
@@ -58,7 +58,7 @@ def get_comments_for_a_post():
     except TypeError:
         response = ErrorResponse()
         response.error['errorCode'] = 'missing args.'
-        response.error['errorMsg'] = '107'
+        response.error['errorMsg'] = '107'  # TODO: put it in util
         return jsonify(response.__dict__)
     sql = "SELECT * FROM comments WHERE pid = {} ORDER BY cid DESC LIMIT {} OFFSET {}" \
         .format(pid, size, offset)
@@ -71,10 +71,10 @@ def get_comments_for_a_post():
         response.data['size'] = size
         response.data['count'] = str(len(indicator))
         response.data['postlist'] = indicator
-    else:  # TODO: to be decided, I am not sure it is desirable - nothing found return error
+    else:  # TODO: to be decided, I am not sure it is desirable
         response = ErrorResponse()
         response.error['errorCode'] = 'No comments found.'
-        response.error['errorMsg'] = '105'
+        response.error['errorMsg'] = '105'  # TODO: put it in util
     return jsonify(response.__dict__)
 
 
@@ -88,8 +88,8 @@ def create_a_comment():
     if content.strip() == '':
         # No empty content
         response = ErrorResponse()
-        response.error['errorCode'] = '108'
-        response.error['errorMsg'] = 'content cannot be empty'
+        response.error['errorCode'] = ''  # TODO
+        response.error['errorMsg'] = 'content cannot be empty'  # TODO
     sql = "INSERT INTO comments(content, pid, uid, subscriber) VALUES ('{}', '{}', '{}', '{}')" \
         .format(content, pid, author_id, subscriber_id)
     if VERBOSE:
@@ -107,8 +107,8 @@ def create_a_comment():
         response.data = indicator
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '106'
-        response.error['errorMsg'] = 'Somehow comment is not posted.'
+        response.error['errorCode'] = '106'  # TODO
+        response.error['errorMsg'] = 'Somehow comment is not posted.'  # TODO
     return jsonify(response.__dict__)
 
 
@@ -123,12 +123,12 @@ def edit_a_comment(cid=None):
     if indicator:
         if uid != indicator['uid']:
             response = ErrorResponse()
-            response.error['errorCode'] = '104'
+            response.error['errorCode'] = '104'  # TODO: put it in util
             response.error['errorMsg'] = "No authority."
             return jsonify(response.__dict__)
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '105'
+        response.error['errorCode'] = '105'  # TODO
         response.error['errorMsg'] = 'cid does not exist.'
         return jsonify(response.__dict__)
 
@@ -136,7 +136,7 @@ def edit_a_comment(cid=None):
     if content.strip() == '':
         # No empty content
         response = ErrorResponse()
-        response.error['errorCode'] = '108'
+        response.error['errorCode'] = ''  # TODO
         response.error['errorMsg'] = 'content cannot be empty.'
     sql = "UPDATE comments SET content='{}', timestamp = (CURRENT_TIMESTAMP) WHERE cid='{}'" \
         .format(content, cid)
@@ -154,7 +154,7 @@ def edit_a_comment(cid=None):
         response.data = indicator
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '106'
+        response.error['errorCode'] = '106'  # TODO
         response.error['errorMsg'] = 'Somehow comment is not posted.'
     return jsonify(response.__dict__)
 
@@ -169,12 +169,12 @@ def delete_a_comment(cid):
     if indicator:
         if uid != indicator['uid']:
             response = ErrorResponse()
-            response.error['errorCode'] = '104'
+            response.error['errorCode'] = '104'  # TODO: put it in util
             response.error['errorMsg'] = "No authority."
             return jsonify(response.__dict__)
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '105'
+        response.error['errorCode'] = '105'  # TODO
         response.error['errorMsg'] = 'cid does not exist.'
         return jsonify(response.__dict__)
 

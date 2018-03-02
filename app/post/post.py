@@ -31,8 +31,8 @@ def get_list():
         response.data['postlist'] = indicator
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '105'
-        response.error['errorMsg'] = 'No post found.'
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = '' #TODO
     return jsonify(response.__dict__)
 
 
@@ -50,14 +50,14 @@ def post_submit():
     # No empty title
     if post_title == "":
         response = ErrorResponse()
-        response.error['errorCode'] = '108'
-        response.error['errorMsg'] = 'title cannot be empty'
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = 'title cannot be empty'#TODO
 
     # No empty content
     elif post_content == "":
         response = ErrorResponse()
-        response.error['errorCode'] = '108'
-        response.error['errorMsg'] = 'content cannot be empty'
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = 'content cannot be empty'#TODO
 
     # Modify Existing Post
     elif request.form.get('pid') is not None:
@@ -123,8 +123,8 @@ def post_get():
         response.data['content'] = indicator['content']
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '105'
-        response.error['errorMsg'] = 'Post does not exist'
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = 'Post does not exist'#TODO
     return jsonify(response.__dict__)
 
 
@@ -140,8 +140,8 @@ def post_delete():
     check = query_fetch(sql, DB)
     if check is None:
         response = ErrorResponse()
-        response.error['errorCode'] = '105'
-        response.error['errorMsg'] = 'post does not exist'
+        response.error['errorCode'] = ''#TODO
+        response.error['errorMsg'] = 'post does not exist'#TODO
         return jsonify(response.__dict__)
     # Check if user have authorization to delete
     sql = "SELECT authorid FROM posts WHERE pid='{}'".format(post_id)
@@ -161,6 +161,6 @@ def post_delete():
     # No authority to delete post
     else:
         response = ErrorResponse()
-        response.error['errorCode'] = '104'
-        response.error['errorMsg'] = 'No authority.'
+        response.error['errorCode'] = '104'#TODO
+        response.error['errorMsg'] = 'No authority.'#TODO
     return jsonify(response.__dict__)
