@@ -9,12 +9,8 @@ install:
  - pip3 install flask flask-sqlalchemy flask-mail pymysql
 
 notifications:
-  slack: nyusher:RUfahaddlRibB9m9YR8NGFmp
-    on_success: always
-    on_failure: always
-
-  email:
-    on_failure: always
+  email: true
+  
 
 script:
  - python3 tests/test_auth.py
