@@ -22,6 +22,14 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    SECRET_KEY = ''
+    MAIL_SERVER = 'smtp.yeah.net'
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USERNAME = 'nyusher@yeah.net'
+    MAIL_PASSWORD = 'nyusher0re'
+    MAIL_DEBUG = False
+    MAIL_USE_SSL = True
 
 
 class DevelopmentConfig(Config):
@@ -31,7 +39,7 @@ class DevelopmentConfig(Config):
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USERNAME = 'nyusher@yeah.net'
-    MAIL_PASSWORD = os.environ['mailpwd']
+    MAIL_PASSWORD = 'nyusher0re'
     MAIL_DEBUG = False
     MAIL_USE_SSL = True
 
@@ -40,19 +48,33 @@ config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
-
     'default': DevelopmentConfig
 }
 
 VERBOSE = True
 
-DB = {'host': 'nyusher.nya.vc', 'port': os.environ['DBport'],
+DOMAIN = 'nyusher.nya.vc'
+
+PORT = 6680
+
+PROTOCOL = 'https://'
+
+# DB info
+
+# Local
+# DB = {'host': '192.168.64.2',
+#                          'user':'root',
+#                          'password':'maxeeisgood',
+#                          'db':'NYUSHer_test',
+#                          'charset': 'utf8',
+#                          'cursorclass': pymysql.cursors.DictCursor}
+
+
+
+DB = {'host': 'nyusher.nya.vc', 'port': 6660,
                          'user':'root',
-                         'password': os.environ['DBpwd'],
+                         'password':'maxeeisgood',
                          'db':'NYUSHer',
                          'charset': 'utf8',
                          'cursorclass': pymysql.cursors.DictCursor}
 
-DOMAIN = 'nyusher.nya.vc'
-PORT = 6680
-PROTOCOL = "https://"
