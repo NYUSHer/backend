@@ -26,7 +26,8 @@ def get_comments_for_a_user(suid=None):
     except TypeError:
         offset = 0
         size = 20
-    sql = "SELECT * FROM comments WHERE subscriber = {} ORDER BY timestamp DESC LIMIT {} OFFSET {}"\
+    sql = "SELECT users.user_name, comments.* FROM comments, users WHERE comments.uid = users.user_id AND" \
+          " subscriber LIKE '%{}%' ORDER BY timestamp DESC LIMIT {} OFFSET {}"\
         .format(suid, size, offset)
     if VERBOSE:
         print('Get comment list query:' + sql)
@@ -37,7 +38,7 @@ def get_comments_for_a_user(suid=None):
         response.data['size'] = size
         response.data['count'] = str(len(indicator))
         response.data['postlist'] = indicator
-    else:  # TODO: to be decided, I am not sure it is desirable - nothing found return error
+    else:
         response = ErrorResponse()
         response.error['errorCode'] = 'No comments found.'
         response.error['errorMsg'] = '105'
@@ -60,8 +61,8 @@ def get_comments_for_a_post():
         response.error['errorCode'] = 'missing args.'
         response.error['errorMsg'] = '107'
         return jsonify(response.__dict__)
-    sql = "SELECT * FROM comments WHERE pid = {} ORDER BY cid DESC LIMIT {} OFFSET {}" \
-        .format(pid, size, offset)
+    sql = "SELECT users.user_name, comments.* FROM comments, users " \
+          "WHERE users.user_id = comments.uid AND pid = {} ORDER BY cid ASC LIMIT {} OFFSET {}".format(pid, size, offset)
     if VERBOSE:
         print('Get comment list query:' + sql)
     indicator = query_dict_fetch(sql, DB)
@@ -71,7 +72,7 @@ def get_comments_for_a_post():
         response.data['size'] = size
         response.data['count'] = str(len(indicator))
         response.data['postlist'] = indicator
-    else:  # TODO: to be decided, I am not sure it is desirable - nothing found return error
+    else:
         response = ErrorResponse()
         response.error['errorCode'] = 'No comments found.'
         response.error['errorMsg'] = '105'
@@ -82,7 +83,7 @@ def get_comments_for_a_post():
 @token_required
 def create_a_comment():
     author_id     = int(request.headers.get('userid'))
-    subscriber_id = int(request.form.get('suid'))
+    subscriber_id = request.form.get('suid')
     pid           = int(request.form.get('pid'))
     content       = replace(request.form.get('content'))
     if content.strip() == '':
@@ -96,8 +97,9 @@ def create_a_comment():
         print("insert query:" + sql)
     query_mod(sql, DB)
     # Get the generated comment
-    sql = "SELECT * FROM comments WHERE pid = '{}' AND uid = '{}' AND subscriber = '{}'" \
-          "ORDER  BY timestamp DESC LIMIT  1" .format(pid, author_id, subscriber_id)
+    sql = "SELECT users.user_name,comments.* FROM comments, users " \
+          "WHERE users.user_id = comments.uid AND pid = {} AND uid = {} AND subscriber = '{}' " \
+          "ORDER BY timestamp DESC LIMIT 1" .format(pid, author_id, subscriber_id)
     if VERBOSE:
         print("get post_id query:" + sql)
     indicator = query_fetch(sql, DB)
