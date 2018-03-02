@@ -4,7 +4,7 @@ from app.auth import auth
 from util.util import LOGIN_ERR, REG_ERR, UID_ERR, VERIFY_ERR
 from util.util import query_fetch, query_mod, token_required, SuccessResponse, ErrorResponse, time
 from util.sendMail import send_mail
-from instance.config import VERBOSE, DB, DOMAIN, PORT
+from instance.config import VERBOSE, DB, DOMAIN, PORT, PROTOCOL
 import uuid
 
 
@@ -93,7 +93,7 @@ def login_by_email(user_email):
         query_mod(sql, DB)
 
         # send email in this block
-        verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
+        verify_url = PROTOCOL + DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
         params = dict(USER=indicator['user_name'], URL=verify_url)
         msg = Message('NYUSHer: Verify Your Login', sender='nyusher@yeah.net', recipients=[user_email])
         msg.html = render_template('login-verification.html', **params)
@@ -143,7 +143,7 @@ def register():
         response.data['token'] = user_token
 
         # send email in this block
-        verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
+        verify_url = PROTOCOL +  DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
         params = dict(USER=user_name, USER_EMAIL=user_email, URL=verify_url)
         print(verify_url)
         msg = Message('NYUSHer: Verify Your Email', sender='nyusher@yeah.net', recipients=[user_email])
@@ -245,7 +245,7 @@ def set_info():
             info = query_fetch(sql, DB)
             user_name = info['user_name']
             user_email = info['user_email']
-            verify_url = DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
+            verify_url = PROTOCOL + DOMAIN + ':' + str(PORT) + url_for('auth.verify', key=key)
             params = dict(USER=user_name, URL=verify_url)
             if VERBOSE:
                 print(verify_url)
