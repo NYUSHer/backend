@@ -62,7 +62,7 @@ def get_comments_for_a_post():
         response.error['errorMsg'] = '107'
         return jsonify(response.__dict__)
     sql = "SELECT users.user_name, comments.* FROM comments, users " \
-          "WHERE users.user_id = comments.uid AND pid = {} ORDER BY cid ASC LIMIT {} OFFSET {}".format(pid, size, offset)
+          "WHERE users.user_id = comments.uid AND pid = {} ORDER BY cid DESC LIMIT {} OFFSET {}".format(pid, size, offset)
     if VERBOSE:
         print('Get comment list query:' + sql)
     indicator = query_dict_fetch(sql, DB)
