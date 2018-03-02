@@ -59,6 +59,7 @@ PORT = 6680
 
 PROTOCOL = 'https://'
 
+# test
 DB = {'host': 'nyusher.nya.vc', 'port':os.environ['DBport'],
                          'user':'root',
                          'password':os.environ['DBpwd'],
