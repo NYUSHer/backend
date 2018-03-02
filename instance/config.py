@@ -22,14 +22,6 @@ class ProductionConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SECRET_KEY = ''
-    MAIL_SERVER = 'smtp.yeah.net'
-    MAIL_PORT = 465
-    MAIL_USE_TLS = False
-    MAIL_USERNAME = 'nyusher@yeah.net'
-    MAIL_PASSWORD = 'nyusher0re'
-    MAIL_DEBUG = False
-    MAIL_USE_SSL = True
 
 
 class DevelopmentConfig(Config):
