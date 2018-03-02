@@ -60,7 +60,7 @@ def get_comments_for_a_post():
         response.error['errorCode'] = 'missing args.'
         response.error['errorMsg'] = '107'
         return jsonify(response.__dict__)
-    sql = "SELECT * FROM comments WHERE pid = {} ORDER BY cid DESC LIMIT {} OFFSET {}" \
+    sql = "SELECT * FROM comments WHERE pid = {} ORDER BY cid ASC LIMIT {} OFFSET {}" \
         .format(pid, size, offset)
     if VERBOSE:
         print('Get comment list query:' + sql)
