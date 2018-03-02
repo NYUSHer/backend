@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tests.test_basic import BasicTestCase
 
 
@@ -9,6 +12,6 @@ class EmailTestCase(BasicTestCase):
                                 follow_redirects=True)
 
     def test_send_email(self):
-        rv = self.send_email(1, 'eb0df5ff-dcfb-497c-a396-cf3cf4f13a78', "Test Email",
-                             ["hl2752@nyu.edu"], "This is just a test.")
+        rv = self.send_email(14, '01eb0f5e-1c41-47c4-95cd-7feb20ff11cb', "Test Email",
+                             ["mk5986@nyu.edu"], "This is just a test.")
         data = rv.get_data().decode()

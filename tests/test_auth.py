@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tests.test_basic import BasicTestCase
 
 
@@ -8,7 +11,7 @@ class LoginTestCase(BasicTestCase):
         follow_redirects=True)
 
     def test_authentication_success(self):
-        rv = self.auth(1, 'eb0df5ff-dcfb-497c-a396-cf3cf4f13a78')
+        rv = self.auth(1, 'b8ef7162-9078-407f-ad97-b236afc9e11a')
         data = rv.get_data().decode()
         print(data)
         assert data == 'hello'

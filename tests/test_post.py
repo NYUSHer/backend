@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tests.test_basic import BasicTestCase
 import json
 
@@ -8,10 +11,10 @@ class PostTestCase(BasicTestCase):
         return self.client.post('post/list', headers=dict(userid=user_id, token=token), data=dict(offset=offset, size=size), follow_redirects=True)
 
     def test_get_list(self):
-        rv = self.get_list(1, 'd1e365b4-8f34-45e8-87b7-ccff280f76f8', 2, 4)
+        rv = self.get_list(1, 'b8ef7162-9078-407f-ad97-b236afc9e11a', 2, 4)
         data = json.loads(rv.get_data().decode())
-        assert data['data']['offset'] == '2'
-        assert data['data']['size'] == '4'
+        assert data['data']['offset'] == 2
+        assert data['data']['size'] == 4
         assert data['data']['count'] == '4'
 
     def get(self, user_id, token, pid):

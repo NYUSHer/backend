@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from tests.test_basic import BasicTestCase
 import json
 
@@ -18,13 +21,13 @@ class LoginTestCase(BasicTestCase):
                                 data=data,
                                 follow_redirects=True)
 
-    def test_set_normal(self):
-        username = 'max'
-        motto = 'Every night I live and die'
-        rv = self.set_info(2, 'ea7cdefd-fbff-4b6c-8c2a-9d5e10c0bd01', username=username, motto=motto, imageuri='nowhere')
-        data = json.loads(rv.get_data().decode())
-        assert data['state'] is True
-        print(data)
+    #def test_set_normal(self):
+    #    username = 'masaki'
+    #    motto = 'aloha'
+    #    rv = self.set_info(20, '3736ccac-ac45-490f-b486-9ebb1e0cc909', username=username, motto=motto, imageuri='https://storage-1.nya.vc/UNuejL2a')
+    #    data = json.loads(rv.get_data().decode())
+    #    print(data)
+    #    assert data['state'] is True
 
     # def test_set_passwd(self):
     #     passwdtoken = 'ec5e1e94c042dda33822701a45eb5e30'

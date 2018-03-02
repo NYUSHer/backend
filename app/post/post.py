@@ -39,10 +39,10 @@ def get_list():
 @post.route('/submit', methods=['POST'])
 @token_required
 def post_submit():
-    post_title = replace((request.form.get('title')).lower())
-    post_category = replace((request.form.get('category')).lower())
-    post_tags = replace((request.form.get('tags')).lower())
-    post_content = replace((request.form.get('content')).lower())
+    post_title = replace(request.form.get('title'))
+    post_category = replace(request.form.get('category'))
+    post_tags = replace(request.form.get('tags'))
+    post_content = replace(request.form.get('content'))
     post_by = request.headers.get('userid')
     if VERBOSE:
         print(post_title, post_category, post_tags, post_content, post_by)

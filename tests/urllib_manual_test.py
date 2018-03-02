@@ -1,3 +1,6 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from urllib import request, parse
 
 
@@ -34,6 +37,3 @@ def set_test():
     res_data = request.urlopen(req)
     res = res_data.read()
     print(res)
-
-
-register_test()

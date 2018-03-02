@@ -125,13 +125,9 @@ def token_required(fn):
 
 # SQL injection mitigation
 def replace(text):
-    text = text.lower()
     text = text.replace("'", "''")
     text = text.replace('"', '\"')
-    text = text.replace("\\", "\ ")
-    text = text.replace("drop", '')
-    text = text.replace("select", '')
+    text = text.replace("\\", "\\\\")
     text = text.replace('--', '')
     text = text.replace(';', '')
-    text = text.replace("delete", '')
     return text
