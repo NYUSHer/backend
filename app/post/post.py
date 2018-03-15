@@ -19,7 +19,7 @@ def get_list():
     size = int(request.form.get('size'))
     # offset = (int(temp)+1)*int(size)
     sql = "SELECT pid, title, content, authorid, user_avatar, user_name FROM " \
-          "posts INNER JOIN users ON users.user_id = posts.authorid ORDER BY pid DESC LIMIT {} OFFSET {}".format(size, offset)
+          "posts INNER JOIN users ON users.user_id = posts.authorid ORDER BY priority, pid DESC LIMIT {} OFFSET {}".format(size, offset)
     if VERBOSE:
         print('get list query:' + sql)
     indicator = query_dict_fetch(sql, DB)
