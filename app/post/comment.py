@@ -87,10 +87,11 @@ def create_a_comment():
     pid           = int(request.form.get('pid'))
     content       = replace(request.form.get('content'))
     if content.strip() == '':
-        # No empty content
+        # No empty content allowed
         response = ErrorResponse()
         response.error['errorCode'] = '108'
         response.error['errorMsg'] = 'content cannot be empty'
+        return jsonify(response.__dict__)
     sql = "INSERT INTO comments(content, pid, uid, subscriber) VALUES ('{}', '{}', '{}', '{}')" \
         .format(content, pid, author_id, subscriber_id)
     if VERBOSE:
