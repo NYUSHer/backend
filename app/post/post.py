@@ -62,7 +62,7 @@ def post_submit():
         return jsonify(response.__dict__)
 
     # Modify Existing Post
-    elif request.form.get('pid') is not None:
+    elif request.form.get('pid') is not None and request.form.get('pid').isdigit():
         post_id = request.form.get('pid')
         # Check if user_id and post_by matches
         sql = "SELECT authorid FROM posts WHERE pid = '{}'".format(post_id)
