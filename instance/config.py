@@ -18,10 +18,12 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     DATABASE_URI = 'sqlite://:memory:'
+    threaded = true
 
 
 class TestingConfig(Config):
     TESTING = True
+    threaded = true
 
 
 class DevelopmentConfig(Config):
@@ -34,6 +36,7 @@ class DevelopmentConfig(Config):
     MAIL_PASSWORD = os.environ['mailpwd']
     MAIL_DEBUG = False
     MAIL_USE_SSL = True
+    threaded = true
 
 
 config = {
