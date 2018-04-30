@@ -55,9 +55,9 @@ PORT = 6680
 PROTOCOL = 'https://'
 
 # test
-DB = {'host': 'nyusher.nya.vc', 'port':6660,
+DB = {'host': 'nyusher.nya.vc', 'port':os.environ['DBport'],
                          'user':'root',
-                         'password':'maxeeisgood',
+                         'password':os.environ['DBpwd'],
                          'db':'NYUSHer',
                          'charset': 'utf8',
                          'cursorclass': pymysql.cursors.DictCursor}
