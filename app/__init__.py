@@ -1,8 +1,5 @@
 from flask import Flask
-#from flask_sqlalchemy import SQLAlchemy
 from instance.config import config
-
-#db = SQLAlchemy()
 
 
 def create_app(config_name):
@@ -11,11 +8,7 @@ def create_app(config_name):
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    #db.init_app(app)
-    #db.app = app
-
     # Register blueprint
-    # Add 'auth' blueprint
     from app.auth import auth as auth_blueprint
     from app.post import post as post_blueprint
     from app.widgets import widgets as post_blueprint
@@ -31,4 +24,4 @@ def create_app(config_name):
 
 if __name__ == "__main__":
     myApp = create_app('development')
-    myApp.run('0.0.0.0', 8080)
+    myApp.run('0.0.0.0', 8080, threaded=True)
