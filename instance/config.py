@@ -31,7 +31,7 @@ class DevelopmentConfig(Config):
     MAIL_PORT = 465
     MAIL_USE_TLS = False
     MAIL_USERNAME = 'nyusher@yeah.net'
-    MAIL_PASSWORD = os.environ['mailpwd']
+    MAIL_PASSWORD = 'nyush0er'
     MAIL_DEBUG = False
     MAIL_USE_SSL = True
 
@@ -52,9 +52,9 @@ PORT = 6680
 PROTOCOL = 'https://'
 
 # test
-DB = {'host': 'nyusher.nya.vc', 'port':os.environ['DBport'],
+DB = {'host': 'nyusher.nya.vc', 'port':6660,
                          'user':'root',
-                         'password':os.environ['DBpwd'],
+                         'password':'maxeeisgood',
                          'db':'NYUSHer',
                          'charset': 'utf8',
                          'cursorclass': pymysql.cursors.DictCursor}

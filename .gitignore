@@ -108,3 +108,5 @@ app/util.py
 
 .DS_Store
 
+tests/test_post.py
+instance/config.py
