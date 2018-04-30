@@ -18,10 +18,12 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
     DATABASE_URI = 'sqlite://:memory:'
+    threaded = True
 
 
 class TestingConfig(Config):
     TESTING = True
+    threaded = True
 
 
 class DevelopmentConfig(Config):
@@ -34,6 +36,7 @@ class DevelopmentConfig(Config):
     MAIL_PASSWORD = 'nyush0er'
     MAIL_DEBUG = False
     MAIL_USE_SSL = True
+    threaded = True
 
 
 config = {
