@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Course Search</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='sp/css/sp.css') }}">
+    <link href="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
+    <link href="https://fonts.loli.net/css?family=Quicksand:700" rel="stylesheet">
+</head>
+
+<body>
+
+
+    <div class="ui container" id="widget" style="margin-top: 10px;">
+        <h1 id="name">Swift Planner</h1>
+        <form id="searchSub">
+            <div class="ui action input" style="width: 100%; margin-top: 10px;">
+                <input id="searchText" type="text" name="searchText" placeholder="Find professors by...">
+                <div class="ui compact selection dropdown" tabindex="0">
+                    <select id="selectOption" name="selectOption">
+                        <option selected="" value="course">By Course</option>
+                        <option value="faculty">By Faculty</option>
+                    </select>
+                    <i class="dropdown icon"></i>
+                    <div class="text">Course</div>
+                    <div class="menu transition hidden" tabindex="-1">
+                        <div class="item" data-value="course">Course</div>
+                        <div class="item" data-value="faculty">Faculty</div>
+                    </div>
+                </div>
+
+                <button id="search" type="submit" class="ui icon button"><i class="search icon"></i></button>
+                <!-- <div id="search" class="ui animated fade button" tabindex="0">
+                  <div class="visible content">Search</div>
+                  <div class="hidden content">
+                    <i class="search icon"></i>
+                  </div>
+                </div> -->
+                <br>
+                
+            </div>
+        </form>
+        <div id="courseListBar" class="ui styled accordion" style="width: 100%; margin-top: 30px; display: none; margin-bottom: 50px;">
+            
+        </div>
+
+    </div>
+
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/forge/0.7.4/forge.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.js"></script>
+    <script src="{{ url_for('static', filename='sp/js/bmob-sdk/bmob-min.js')}}" type="text/javascript"></script>
+
+    <script src="{{ url_for('static', filename='sp/js/sp.js')}}"></script>
+</body>
+
+</html>

@@ -25,7 +25,7 @@ def get_list():
         size = 20
     else:
         size = int(size)
-        
+
     # offset = (int(temp)+1)*int(size)
     sql = "SELECT pid, title, content, authorid, user_avatar, user_name FROM " \
           "posts INNER JOIN users ON users.user_id = posts.authorid ORDER BY priority DESC, pid DESC LIMIT {} OFFSET {}".format(size, offset)

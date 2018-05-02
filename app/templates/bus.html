@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bus Schedule</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bus/css/bus.css')}}">
+    <link href="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
+    <link href="https://fonts.loli.net/css?family=Quicksand:400,700" rel="stylesheet">
+</head>
+
+<body>
+
+
+    <div class="ui container" id="widget" style="margin-top: 10px;">
+        <h1 id="title">Next Shuttle</h1>
+
+        
+        <div id="D2A">
+            <h4 class="head">From Dorm:</h4>
+            <div class="ui bulleted list">
+                    <div id="D2A1" class="item">D2A1</div>
+                    <div id="D2A2" class="item">D2A2</div>
+                </div>
+        </div>
+        <div id="A2D">
+            <h4 class="head">From AB:</h4>
+            <div class="ui bulleted list">
+                <div id="A2D1" class="item">A2D1</div>
+                <div id="A2D2" class="item">A2D2</div>
+            </div>
+        </div>
+        <img id="bus-schedule" src="{{ url_for('static', filename='bus/img/bus_schedule.JPG')}}" alt="bus_schedule">
+
+        <!-- commented out for auto load bus schedule -->
+        <!-- <form id="searchSub"><button id="search" type="submit" class="ui icon button"><i class="search icon"></i></button></form> -->
+    </div>
+
+    <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/forge/0.7.4/forge.min.js"></script>
+
+    <script src="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.js"></script>
+
+    <script src="{{ url_for('static', filename='bus/js/bus.js')}}"></script>
+</body>
+
+</html>

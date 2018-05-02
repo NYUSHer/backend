@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>NYUer</title>
+  <link href="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='sp/css/prof.css')}}">
+</head>
+<body>
+
+  <div class="ui list" style="margin-top: 60px;">
+    <div class="item">
+      <img class="ui small rounded image" id="headShot" src="https://file.yuuno.cc/oSPawzcy">
+      <div class="content" id="professorInfo">
+
+        <a class="header" id= "professorName" href="javascript:;">Loading ...</a>
+
+        <div class="ui heart rating static" id="professorStar" data-rating="0" data-max-rating="5"></div>
+
+        <div id="description" class="description">Loading, Please Wait ...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="ui divider" style=""></div> -->
+
+  <div class="ui piled segment" id="professorBio">
+      <i class="ui basic loading massive button disabled" style="width: 100%; margin: 5px 0px;"></i>
+  </div>
+
+
+  <div class="ui threaded comments" id="commentsArea">
+    <h3 class="ui dividing header">Comments</h3>
+    <loader id="commentLoader">
+        <i class="ui basic loading massive button disabled" style="width: 100%; margin: 5px 0px;"></i>
+    </loader>
+    <form class="ui reply form">
+      <div class="field">
+        <textarea id="commentBox"></textarea>
+      </div>
+
+      <div class="ui heart rating edit" id="rateProfessor" data-rating="3" data-max-rating="5"></div>
+
+      <br /><br />
+
+      <div class="ui blue labeled submit icon button" onclick="submitComment()">
+        <i class="icon edit"></i> Add Reply
+      </div>
+      <br>
+      <br>
+      <br>
+
+    </form>
+  </div>
+
+
+
+
+  <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.js"></script>
+  <script src="{{ url_for('static', filename='sp/js/bmob-sdk/bmob-min.js')}}" type="text/javascript"></script>
+  <script src="{{ url_for('static', filename='sp/js/prof.js')}}" type="text/javascript"></script>
+</body>
+</html>

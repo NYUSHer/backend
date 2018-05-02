@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from instance.config import config
 
 
@@ -19,9 +19,26 @@ def create_app(config_name):
 
     # Add directory and error page
 
+    # Add static page
+    @app.route('/favicon.ico/')
+    def favicon():
+        return 'hello'
+
+    @app.route('/sp.html/')
+    def sp():
+        return render_template('sp.html')
+
+    @app.route('/bus.html/')
+    def bus():
+        return render_template('bus.html')
+
+    @app.route('/prof.html/')
+    def prof():
+        return render_template('prof.html')
+
     return app
 
 
 if __name__ == "__main__":
     myApp = create_app('development')
-    myApp.run('0.0.0.0', 8080, threaded=True)
+    myApp.run('localhost', 5000, threaded=True)

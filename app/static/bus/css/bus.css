@@ -1,0 +1,58 @@
+#widget{
+    margin: 0 0 !important;
+    width: 100% !important;
+    background: linear-gradient(to right, #5789FF, #7FC7FF);
+    height: 100%;
+}
+
+#title{
+    font-family: Quicksand;
+    font-weight: 700;
+    color: white;
+    padding-top: 15px;
+    padding-left: 15px;
+    margin-bottom: 6px;
+}
+
+.head{
+    font-family: Quicksand;
+    font-weight: 700;
+    color: white;
+    padding-top: 15px;
+    padding-left: 25px;
+    margin-bottom: 6px;
+}
+
+.item{
+    font-family: Quicksand;
+    font-weight: 400;
+    font-size: 1em;
+    color: white;
+    padding-left: 25px !important;
+}
+
+#D2A{
+    width: 50%;
+    float: left;
+    left: 5%;
+}
+
+#A2D{
+    width: 50%;
+    float: left;
+    right: 5%;
+}
+
+#search{
+    border-radius: 32px;
+    background: #f3c4ca;
+    color: white;
+    margin-top: 30px !important;
+    margin-left: 20px !important;
+    height: 32px;
+}
+
+#bus-schedule{
+    margin-top: 20px;
+    width: 100%;
+}
