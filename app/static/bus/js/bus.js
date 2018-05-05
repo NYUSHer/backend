@@ -1,7 +1,7 @@
 (function() {
 
-    // let BASEURI = "https://nyu.nekoyu.cc:6680";  // server mode
-    let BASEURI = "http://localhost:8080"; // localtest mode
+    let BASEURI = "https://nyu.nekoyu.cc:6680";  // server mode
+    // let BASEURI = "http://localhost:8080"; // localtest mode
     let $refreshButton = $("#search");
     let $buttonClick = $("#searchSub");
     // let $busSchedule = $("#bus-schedule");
@@ -16,8 +16,8 @@
         refresh();
     });
 
-    auto load bus schedule
-    deprecated, browser does not support
+    // auto load bus schedule
+    // deprecated, browser does not support
     $( document ).ready(function() {
         refresh();
     });

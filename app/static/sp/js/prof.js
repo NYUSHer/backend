@@ -9,8 +9,14 @@ $('.ui.rating.static')
 var NID = "";
 var NNAME = "";
 let BASEURI = "http://api-sp.nyu.wiki";
-// let BASEURI = "http://localhost:8080";
+// let BASEURI = "http://localhost:80";
+let $searchAgain = $("#searchAgain");
+
 Bmob.initialize("1fe041375281fb38612829308c8b2f06", "5e2d348f45b02e6915c8be18e384e335");
+
+$( "#searchAgain" ).click(function() {
+	window.location = "https://nyu.nekoyu.cc:6680/sp.html/";
+});
 
 function getProf() {
 	axios.get(`${BASEURI}/faculty?instructor_nyu_id=${NID}`, { timeout: 10000 })
