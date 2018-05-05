@@ -10,16 +10,17 @@
     let $A2D2 = $("#A2D2");
     var clicked = false;
 
-    // $buttonClick.on("submit", e => {
-    //     e.preventDefault();
+    $buttonClick.on("submit", e => {
+        e.preventDefault();
+        refresh();
+    });
+
+    // auto load bus schedule
+    // deprecated, browser does not support
+    // $( document ).ready(function() {
     //     refresh();
     // });
 
-    // auto load bus schedule
-    $( document ).ready(function() {
-        refresh();
-    });
-    
     $( "#widget" ).click(function() {
         if (clicked == false) {
             window.location.hash = "2";
@@ -29,7 +30,7 @@
             clicked = false;
         }
       });
-    
+
     function submission() {
         $searchButton.addClass("loading");
         refresh();

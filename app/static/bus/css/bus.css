@@ -12,6 +12,7 @@
     padding-top: 15px;
     padding-left: 15px;
     margin-bottom: 6px;
+    float: left;
 }
 
 .head{
@@ -45,11 +46,12 @@
 
 #search{
     border-radius: 32px;
-    background: #f3c4ca;
-    color: white;
-    margin-top: 30px !important;
+    background: #639cff;
+    margin: 15px;
+    /* color: white; */
+    /* margin-top: 30px !important;
     margin-left: 20px !important;
-    height: 32px;
+    height: 32px; */
 }
 
 #bus-schedule{
