@@ -4,6 +4,7 @@
     let BASEURI = "http://localhost:8080"; // localtest mode
     let $refreshButton = $("#search");
     let $buttonClick = $("#searchSub");
+    // let $busSchedule = $("#bus-schedule");
     let $D2A1 = $("#D2A1");
     let $D2A2 = $("#D2A2");
     let $A2D1 = $("#A2D1");
@@ -15,18 +16,21 @@
         refresh();
     });
 
-    // auto load bus schedule
-    // deprecated, browser does not support
-    // $( document ).ready(function() {
-    //     refresh();
-    // });
+    auto load bus schedule
+    deprecated, browser does not support
+    $( document ).ready(function() {
+        refresh();
+    });
 
     $( "#widget" ).click(function() {
         if (clicked == false) {
             window.location.hash = "2";
+            document.getElementById("bus-schedule").style.display = "inline";
             clicked = true;
         } else {
             window.location.hash = "1";
+            // $("busSchedule").css("display", "0.5");
+            document.getElementById("bus-schedule").style.display = "none";
             clicked = false;
         }
       });
