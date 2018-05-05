@@ -5,9 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Bus Schedule</title>
 
-    <link rel="stylesheet" href="css/bus.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bus/css/bus.css')}}">
     <link href="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.css" rel="stylesheet">
     <link href="https://fonts.loli.net/css?family=Quicksand:400,700" rel="stylesheet">
 </head>
@@ -47,7 +48,7 @@
 
     <script src="https://cdn.bootcss.com/semantic-ui/2.3.1/semantic.min.js"></script>
 
-    <script src="./js/bus.js"></script>
+    <script src="{{ url_for('static', filename='bus/js/bus.js')}}"></script>
 </body>
 
 </html>
